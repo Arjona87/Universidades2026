@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Escuelas Media Superior y Superior AMG</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+    /* El tema se aplica antes de pintar para evitar el destello blanco. */
+    try {
+        var g = JSON.parse(localStorage.getItem('cges-amg-escuelas-v1') || '{}');
+        if (g && (g.tema === 'dark' || g.tema === 'light')) document.documentElement.setAttribute('data-theme', g.tema);
+    } catch (e) {}
+</script>
+<style>
+
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container,
+.leaflet-pane > svg,
+.leaflet-pane > canvas,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	}
+.leaflet-container {
+	overflow: hidden;
+	}
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
+	  -webkit-user-drag: none;
+	}
+
+.leaflet-tile::selection {
+	background: transparent;
+}
+
+.leaflet-safari .leaflet-tile {
+	image-rendering: -webkit-optimize-contrast;
+	}
+
+.leaflet-safari .leaflet-tile-container {
+	width: 1600px;
+	height: 1600px;
+	-webkit-transform-origin: 0 0;
+	}
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	display: block;
+	}
+
+
+.leaflet-container .leaflet-overlay-pane svg {
+	max-width: none !important;
+	max-height: none !important;
+	}
+.leaflet-container .leaflet-marker-pane img,
+.leaflet-container .leaflet-shadow-pane img,
+.leaflet-container .leaflet-tile-pane img,
+.leaflet-container img.leaflet-image-layer,
+.leaflet-container .leaflet-tile {
+	max-width: none !important;
+	max-height: none !important;
+	width: auto;
+	padding: 0;
+	}
+
+.leaflet-container img.leaflet-tile {
+	
+	mix-blend-mode: plus-lighter;
+}
+
+.leaflet-container.leaflet-touch-zoom {
+	-ms-touch-action: pan-x pan-y;
+	touch-action: pan-x pan-y;
+	}
+.leaflet-container.leaflet-touch-drag {
+	-ms-touch-action: pinch-zoom;
+	
+	touch-action: none;
+	touch-action: pinch-zoom;
+}
+.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.leaflet-container {
+	-webkit-tap-highlight-color: transparent;
+}
+.leaflet-container a {
+	-webkit-tap-highlight-color: rgba(51, 181, 229, 0.4);
+}
+.leaflet-tile {
+	filter: inherit;
+	visibility: hidden;
+	}
+.leaflet-tile-loaded {
+	visibility: inherit;
+	}
+.leaflet-zoom-box {
+	width: 0;
+	height: 0;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	z-index: 800;
+	}
+
+.leaflet-overlay-pane svg {
+	-moz-user-select: none;
+	}
+
+.leaflet-pane         { z-index: 400; }
+
+.leaflet-tile-pane    { z-index: 200; }
+.leaflet-overlay-pane { z-index: 400; }
+.leaflet-shadow-pane  { z-index: 500; }
+.leaflet-marker-pane  { z-index: 600; }
+.leaflet-tooltip-pane   { z-index: 650; }
+.leaflet-popup-pane   { z-index: 700; }
+
+.leaflet-map-pane canvas { z-index: 100; }
+.leaflet-map-pane svg    { z-index: 200; }
+
+.leaflet-vml-shape {
+	width: 1px;
+	height: 1px;
+	}
+.lvml {
+	behavior: url(#default#VML);
+	display: inline-block;
+	position: absolute;
+	}
+
+
+
+
+.leaflet-control {
+	position: relative;
+	z-index: 800;
+	pointer-events: visiblePainted; 
+	pointer-events: auto;
+	}
+.leaflet-top,
+.leaflet-bottom {
+	position: absolute;
+	z-index: 1000;
+	pointer-events: none;
+	}
+.leaflet-top {
+	top: 0;
+	}
+.leaflet-right {
+	right: 0;
+	}
+.leaflet-bottom {
+	bottom: 0;
+	}
+.leaflet-left {
+	left: 0;
+	}
+.leaflet-control {
+	float: left;
+	clear: both;
+	}
+.leaflet-right .leaflet-control {
+	float: right;
+	}
+.leaflet-top .leaflet-control {
+	margin-top: 10px;
+	}
+.leaflet-bottom .leaflet-control {
+	margin-bottom: 10px;
+	}
+.leaflet-left .leaflet-control {
+	margin-left: 10px;
+	}
+.leaflet-right .leaflet-control {
+	margin-right: 10px;
+	}
+
+
+
+
+.leaflet-fade-anim .leaflet-popup {
+	opacity: 0;
+	-webkit-transition: opacity 0.2s linear;
+	   -moz-transition: opacity 0.2s linear;
+	        transition: opacity 0.2s linear;
+	}
+.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
+	opacity: 1;
+	}
+.leaflet-zoom-animated {
+	-webkit-transform-origin: 0 0;
+	    -ms-transform-origin: 0 0;
+	        transform-origin: 0 0;
+	}
+svg.leaflet-zoom-animated {
+	will-change: transform;
+}
+
+.leaflet-zoom-anim .leaflet-zoom-animated {
+	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
+	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
+	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);
+	}
+.leaflet-zoom-anim .leaflet-tile,
+.leaflet-pan-anim .leaflet-tile {
+	-webkit-transition: none;
+	   -moz-transition: none;
+	        transition: none;
+	}
+
+.leaflet-zoom-anim .leaflet-zoom-hide {
+	visibility: hidden;
+	}
+
+
+
+
+.leaflet-interactive {
+	cursor: pointer;
+	}
+.leaflet-grab {
+	cursor: -webkit-grab;
+	cursor:    -moz-grab;
+	cursor:         grab;
+	}
+.leaflet-crosshair,
+.leaflet-crosshair .leaflet-interactive {
+	cursor: crosshair;
+	}
+.leaflet-popup-pane,
+.leaflet-control {
+	cursor: auto;
+	}
+.leaflet-dragging .leaflet-grab,
+.leaflet-dragging .leaflet-grab .leaflet-interactive,
+.leaflet-dragging .leaflet-marker-draggable {
+	cursor: move;
+	cursor: -webkit-grabbing;
+	cursor:    -moz-grabbing;
+	cursor:         grabbing;
+	}
+
+
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-image-layer,
+.leaflet-pane > svg path,
+.leaflet-tile-container {
+	pointer-events: none;
+	}
+
+.leaflet-marker-icon.leaflet-interactive,
+.leaflet-image-layer.leaflet-interactive,
+.leaflet-pane > svg path.leaflet-interactive,
+svg.leaflet-image-layer.leaflet-interactive path {
+	pointer-events: visiblePainted; 
+	pointer-events: auto;
+	}
+
+
+
+.leaflet-container {
+	background: #ddd;
+	outline-offset: 1px;
+	}
+.leaflet-container a {
+	color: #0078A8;
+	}
+.leaflet-zoom-box {
+	border: 2px dotted #38f;
+	background: rgba(255,255,255,0.5);
+	}
+
+
+
+.leaflet-container {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-size: 0.75rem;
+	line-height: 1.5;
+	}
+
+
+
+
+.leaflet-bar {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+	border-radius: 4px;
+	}
+.leaflet-bar a {
+	background-color: #fff;
+	border-bottom: 1px solid #ccc;
+	width: 26px;
+	height: 26px;
+	line-height: 26px;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	}
+.leaflet-bar a,
+.leaflet-control-layers-toggle {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	display: block;
+	}
+.leaflet-bar a:hover,
+.leaflet-bar a:focus {
+	background-color: #f4f4f4;
+	}
+.leaflet-bar a:first-child {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	}
+.leaflet-bar a:last-child {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom: none;
+	}
+.leaflet-bar a.leaflet-disabled {
+	cursor: default;
+	background-color: #f4f4f4;
+	color: #bbb;
+	}
+
+.leaflet-touch .leaflet-bar a {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	}
+.leaflet-touch .leaflet-bar a:first-child {
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+	}
+.leaflet-touch .leaflet-bar a:last-child {
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+	}
+
+
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+	font: bold 18px 'Lucida Console', Monaco, monospace;
+	text-indent: 1px;
+	}
+
+.leaflet-touch .leaflet-control-zoom-in, .leaflet-touch .leaflet-control-zoom-out  {
+	font-size: 22px;
+	}
+
+
+
+
+.leaflet-control-layers {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	background: #fff;
+	border-radius: 5px;
+	}
+.leaflet-control-layers-toggle {
+	background-image: none;
+	width: 36px;
+	height: 36px;
+	}
+.leaflet-retina .leaflet-control-layers-toggle {
+	background-image: none;
+	background-size: 26px 26px;
+	}
+.leaflet-touch .leaflet-control-layers-toggle {
+	width: 44px;
+	height: 44px;
+	}
+.leaflet-control-layers .leaflet-control-layers-list,
+.leaflet-control-layers-expanded .leaflet-control-layers-toggle {
+	display: none;
+	}
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+	display: block;
+	position: relative;
+	}
+.leaflet-control-layers-expanded {
+	padding: 6px 10px 6px 6px;
+	color: #333;
+	background: #fff;
+	}
+.leaflet-control-layers-scrollbar {
+	overflow-y: scroll;
+	overflow-x: hidden;
+	padding-right: 5px;
+	}
+.leaflet-control-layers-selector {
+	margin-top: 2px;
+	position: relative;
+	top: 1px;
+	}
+.leaflet-control-layers label {
+	display: block;
+	font-size: 13px;
+	font-size: 1.08333em;
+	}
+.leaflet-control-layers-separator {
+	height: 0;
+	border-top: 1px solid #ddd;
+	margin: 5px -10px 5px -6px;
+	}
+
+
+.leaflet-default-icon-path { 
+	background-image: none;
+	}
+
+
+
+
+.leaflet-container .leaflet-control-attribution {
+	background: #fff;
+	background: rgba(255, 255, 255, 0.8);
+	margin: 0;
+	}
+.leaflet-control-attribution,
+.leaflet-control-scale-line {
+	padding: 0 5px;
+	color: #333;
+	line-height: 1.4;
+	}
+.leaflet-control-attribution a {
+	text-decoration: none;
+	}
+.leaflet-control-attribution a:hover,
+.leaflet-control-attribution a:focus {
+	text-decoration: underline;
+	}
+.leaflet-attribution-flag {
+	display: inline !important;
+	vertical-align: baseline !important;
+	width: 1em;
+	height: 0.6669em;
+	}
+.leaflet-left .leaflet-control-scale {
+	margin-left: 5px;
+	}
+.leaflet-bottom .leaflet-control-scale {
+	margin-bottom: 5px;
+	}
+.leaflet-control-scale-line {
+	border: 2px solid #777;
+	border-top: none;
+	line-height: 1.1;
+	padding: 2px 5px 1px;
+	white-space: nowrap;
+	-moz-box-sizing: border-box;
+	     box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.8);
+	text-shadow: 1px 1px #fff;
+	}
+.leaflet-control-scale-line:not(:first-child) {
+	border-top: 2px solid #777;
+	border-bottom: none;
+	margin-top: -2px;
+	}
+.leaflet-control-scale-line:not(:first-child):not(:last-child) {
+	border-bottom: 2px solid #777;
+	}
+
+.leaflet-touch .leaflet-control-attribution,
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	box-shadow: none;
+	}
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	border: 2px solid rgba(0,0,0,0.2);
+	background-clip: padding-box;
+	}
+
+
+
+
+.leaflet-popup {
+	position: absolute;
+	text-align: center;
+	margin-bottom: 20px;
+	}
+.leaflet-popup-content-wrapper {
+	padding: 1px;
+	text-align: left;
+	border-radius: 12px;
+	}
+.leaflet-popup-content {
+	margin: 13px 24px 13px 20px;
+	line-height: 1.3;
+	font-size: 13px;
+	font-size: 1.08333em;
+	min-height: 1px;
+	}
+.leaflet-popup-content p {
+	margin: 17px 0;
+	margin: 1.3em 0;
+	}
+.leaflet-popup-tip-container {
+	width: 40px;
+	height: 20px;
+	position: absolute;
+	left: 50%;
+	margin-top: -1px;
+	margin-left: -20px;
+	overflow: hidden;
+	pointer-events: none;
+	}
+.leaflet-popup-tip {
+	width: 17px;
+	height: 17px;
+	padding: 1px;
+
+	margin: -10px auto 0;
+	pointer-events: auto;
+
+	-webkit-transform: rotate(45deg);
+	   -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	        transform: rotate(45deg);
+	}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+	background: white;
+	color: #333;
+	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+	}
+.leaflet-container a.leaflet-popup-close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: none;
+	text-align: center;
+	width: 24px;
+	height: 24px;
+	font: 16px/24px Tahoma, Verdana, sans-serif;
+	color: #757575;
+	text-decoration: none;
+	background: transparent;
+	}
+.leaflet-container a.leaflet-popup-close-button:hover,
+.leaflet-container a.leaflet-popup-close-button:focus {
+	color: #585858;
+	}
+.leaflet-popup-scrolled {
+	overflow: auto;
+	}
+
+.leaflet-oldie .leaflet-popup-content-wrapper {
+	-ms-zoom: 1;
+	}
+.leaflet-oldie .leaflet-popup-tip {
+	width: 24px;
+	margin: 0 auto;
+
+	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
+	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
+	}
+
+.leaflet-oldie .leaflet-control-zoom,
+.leaflet-oldie .leaflet-control-layers,
+.leaflet-oldie .leaflet-popup-content-wrapper,
+.leaflet-oldie .leaflet-popup-tip {
+	border: 1px solid #999;
+	}
+
+
+
+
+.leaflet-div-icon {
+	background: #fff;
+	border: 1px solid #666;
+	}
+
+
+
+
+.leaflet-tooltip {
+	position: absolute;
+	padding: 6px;
+	background-color: #fff;
+	border: 1px solid #fff;
+	border-radius: 3px;
+	color: #222;
+	white-space: nowrap;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	pointer-events: none;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+	}
+.leaflet-tooltip.leaflet-interactive {
+	cursor: pointer;
+	pointer-events: auto;
+	}
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	position: absolute;
+	pointer-events: none;
+	border: 6px solid transparent;
+	background: transparent;
+	content: "";
+	}
+
+
+
+.leaflet-tooltip-bottom {
+	margin-top: 6px;
+}
+.leaflet-tooltip-top {
+	margin-top: -6px;
+}
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-top:before {
+	left: 50%;
+	margin-left: -6px;
+	}
+.leaflet-tooltip-top:before {
+	bottom: 0;
+	margin-bottom: -12px;
+	border-top-color: #fff;
+	}
+.leaflet-tooltip-bottom:before {
+	top: 0;
+	margin-top: -12px;
+	margin-left: -6px;
+	border-bottom-color: #fff;
+	}
+.leaflet-tooltip-left {
+	margin-left: -6px;
+}
+.leaflet-tooltip-right {
+	margin-left: 6px;
+}
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+	top: 50%;
+	margin-top: -6px;
+	}
+.leaflet-tooltip-left:before {
+	right: 0;
+	margin-right: -12px;
+	border-left-color: #fff;
+	}
+.leaflet-tooltip-right:before {
+	left: 0;
+	margin-left: -12px;
+	border-right-color: #fff;
+	}
+
+
+
+@media print {
+	
+	.leaflet-control {
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+		}
+	}
+.leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow {
+	-webkit-transition: -webkit-transform 0.3s ease-out, opacity 0.3s ease-in;
+	-moz-transition: -moz-transform 0.3s ease-out, opacity 0.3s ease-in;
+	-o-transition: -o-transform 0.3s ease-out, opacity 0.3s ease-in;
+	transition: transform 0.3s ease-out, opacity 0.3s ease-in;
+}
+
+.leaflet-cluster-spider-leg {
+	
+	-webkit-transition: -webkit-stroke-dashoffset 0.3s ease-out, -webkit-stroke-opacity 0.3s ease-in;
+	-moz-transition: -moz-stroke-dashoffset 0.3s ease-out, -moz-stroke-opacity 0.3s ease-in;
+	-o-transition: -o-stroke-dashoffset 0.3s ease-out, -o-stroke-opacity 0.3s ease-in;
+	transition: stroke-dashoffset 0.3s ease-out, stroke-opacity 0.3s ease-in;
+}
+.marker-cluster-small {
+	background-color: rgba(181, 226, 140, 0.6);
+	}
+.marker-cluster-small div {
+	background-color: rgba(110, 204, 57, 0.6);
+	}
+
+.marker-cluster-medium {
+	background-color: rgba(241, 211, 87, 0.6);
+	}
+.marker-cluster-medium div {
+	background-color: rgba(240, 194, 12, 0.6);
+	}
+
+.marker-cluster-large {
+	background-color: rgba(253, 156, 115, 0.6);
+	}
+.marker-cluster-large div {
+	background-color: rgba(241, 128, 23, 0.6);
+	}
+
+	
+.leaflet-oldie .marker-cluster-small {
+	background-color: rgb(181, 226, 140);
+	}
+.leaflet-oldie .marker-cluster-small div {
+	background-color: rgb(110, 204, 57);
+	}
+
+.leaflet-oldie .marker-cluster-medium {
+	background-color: rgb(241, 211, 87);
+	}
+.leaflet-oldie .marker-cluster-medium div {
+	background-color: rgb(240, 194, 12);
+	}
+
+.leaflet-oldie .marker-cluster-large {
+	background-color: rgb(253, 156, 115);
+	}
+.leaflet-oldie .marker-cluster-large div {
+	background-color: rgb(241, 128, 23);
+}
+
+.marker-cluster {
+	background-clip: padding-box;
+	border-radius: 20px;
+	}
+.marker-cluster div {
+	width: 30px;
+	height: 30px;
+	margin-left: 5px;
+	margin-top: 5px;
+
+	text-align: center;
+	border-radius: 15px;
+	font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+	}
+.marker-cluster span {
+	line-height: 30px;
+	}
+    /* =====================================================================
+       SISTEMA DE DISEÑO — CENTRO DE MANDO CGES JALISCO (heredado de Reportes)
+       Diseño: barra de mando institucional + un panel único con el mapa.
+       ===================================================================== */
+    :root {
+        --brand:#18345D; --brand-deep:#0f2438; --brand-head:#24487A;
+        --accent:#F08013; --risk:#C0392B; --down:#1E8449;
+        --canvas:#F4F7FA; --surface:#FFFFFF; --surface-2:#F8FAFC; --surface-3:#EEF3F9;
+        --ink:#0F1E33; --ink-soft:#33465F; --muted:#64748B;
+        --line:#DCE4EE; --line-soft:#E9EFF6;
+        --shadow:0 1px 2px rgba(15,30,51,.06), 0 8px 24px rgba(15,30,51,.07);
+        --topbar:linear-gradient(120deg, #18345D 0%, #0f2438 100%);
+        --chip:#EEF3F9;
+        --map-ground:#E6ECF3;
+        --r-sm:6px; --r-md:10px; --r-lg:14px; --r-pill:999px;
+        --gap:18px; --maxw:1500px;
+        --f-display:'Poppins','Inter',system-ui,sans-serif;
+        --f-body:'Inter','Segoe UI',system-ui,sans-serif;
+        /* Colores por tipo: azules = UdeG, cálidos = particulares; el tono oscuro y el punto grande marcan nivel superior. */
+        --t-prepa-udg:#2E86C1; --t-uni-udg:#18345D; --t-prepa-priv:#F08013; --t-uni-priv:#8E2C48;
+    }
+    @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+            --canvas:#0B1727; --surface:#112240; --surface-2:#0E1D34; --surface-3:#16305A;
+            --ink:#E8EFF9; --ink-soft:#C3D2E6; --muted:#8FA3BF; --line:#1E3A5F; --line-soft:#17304F;
+            --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.35);
+            --topbar:linear-gradient(120deg, #16305A 0%, #0B1727 100%);
+            --chip:#16305A; --map-ground:#1A2E4A; color-scheme:dark;
+        }
+    }
+    :root[data-theme="dark"] {
+        --canvas:#0B1727; --surface:#112240; --surface-2:#0E1D34; --surface-3:#16305A;
+        --ink:#E8EFF9; --ink-soft:#C3D2E6; --muted:#8FA3BF; --line:#1E3A5F; --line-soft:#17304F;
+        --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px rgba(0,0,0,.35);
+        --topbar:linear-gradient(120deg, #16305A 0%, #0B1727 100%);
+        --chip:#16305A; --map-ground:#1A2E4A; color-scheme:dark;
+    }
+
+    *, *::before, *::after { box-sizing:border-box; }
+    body {
+        margin:0; font-family:var(--f-body); background:var(--canvas); color:var(--ink);
+        line-height:1.6; font-size:15px; -webkit-font-smoothing:antialiased;
+        transition:background-color .25s ease, color .25s ease;
+    }
+    h1, h2 { font-family:var(--f-display); margin:0; text-wrap:balance; }
+    :focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+    ::selection { background:var(--accent); color:#fff; }
+
+    /* ===== Barra de mando ===== */
+    header {
+        background:var(--topbar); color:#fff; position:sticky; top:env(safe-area-inset-top, 0px); z-index:1200;
+        border-bottom:1px solid rgba(255,255,255,.10); box-shadow:0 4px 24px rgba(11,23,39,.28);
+    }
+    .header-content {
+        max-width:var(--maxw); margin:0 auto; padding-block:12px;
+        padding-left:max(22px, env(safe-area-inset-left, 0px)); padding-right:max(22px, env(safe-area-inset-right, 0px));
+        display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:18px;
+    }
+    .header-logo-box { display:flex; align-items:center; background:#fff; padding:7px 13px; border-radius:var(--r-md); flex-shrink:0; }
+    .header-logo-cges { height:34px; width:auto; display:block; }
+    .header-title-center { min-width:0; }
+    .eyebrow { font-size:10.5px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); display:block; margin-bottom:1px; }
+    header h1 { font-size:19px; font-weight:700; letter-spacing:-.01em; line-height:1.25; color:#fff; }
+    .header-right { display:flex; align-items:center; gap:10px; }
+    .btn-icono {
+        background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.30); color:#fff;
+        width:36px; height:36px; border-radius:var(--r-sm); font-size:15px; cursor:pointer;
+        display:inline-flex; align-items:center; justify-content:center;
+    }
+    .btn-icono:hover { background:rgba(255,255,255,.20); }
+
+    /* ===== Estructura ===== */
+    main {
+        max-width:var(--maxw); margin:0 auto; padding-block:24px 56px;
+        padding-left:max(22px, env(safe-area-inset-left, 0px)); padding-right:max(22px, env(safe-area-inset-right, 0px));
+    }
+    section { background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow); margin-bottom:var(--gap); overflow:hidden; }
+    .panel-cab { display:flex; align-items:center; gap:12px; padding:14px 20px; border-bottom:1px solid var(--line); background:var(--surface); cursor:pointer; user-select:none; }
+    .panel-cab:hover { background:var(--surface-2); }
+    section h2 { font-size:15px; font-weight:600; color:var(--ink); display:flex; align-items:center; gap:9px; flex:1 1 auto; min-width:0; }
+    .h2-marca { width:4px; height:19px; border-radius:2px; background:var(--accent); flex:0 0 auto; }
+    .panel-nota { font-size:11.5px; color:var(--muted); font-weight:500; white-space:nowrap; }
+    .panel-toggle {
+        border:1px solid var(--line); background:var(--surface-2); color:var(--muted); width:26px; height:26px;
+        border-radius:var(--r-sm); font-size:11px; display:inline-flex; align-items:center; justify-content:center;
+        transition:transform .22s ease; flex:0 0 auto;
+    }
+    section.cerrado .panel-toggle { transform:rotate(-90deg); }
+    section.cerrado .panel-cuerpo { display:none; }
+    .panel-cuerpo { padding:20px; }
+
+    .mun-intro { margin-bottom:16px; }
+    .mun-kicker { display:block; font-size:10.5px; font-weight:800; letter-spacing:.10em; text-transform:uppercase; color:var(--accent); margin-bottom:4px; }
+    .mun-intro p { font-size:13px; line-height:1.65; color:var(--muted); margin:0; max-width:110ch; }
+    .mun-intro code { font-size:12px; background:var(--chip); color:var(--ink-soft); padding:1px 5px; border-radius:4px; }
+
+    .chart-barra { display:flex; gap:9px 12px; flex-wrap:wrap; margin-bottom:12px; align-items:center; }
+    .chart-barra select, .chart-barra input[type="search"] {
+        font-family:var(--f-body); font-size:12.5px; padding:7px 10px; border:1px solid var(--line);
+        border-radius:var(--r-sm); background:var(--surface); color:var(--ink); min-width:0;
+    }
+    .chart-barra input[type="search"] { width:260px; max-width:100%; }
+    .conmutador { display:inline-flex; border:1px solid var(--line); border-radius:var(--r-sm); overflow:hidden; flex-wrap:wrap; }
+    .conmutador button { font-family:var(--f-body); font-size:12px; font-weight:600; padding:7px 13px; border:none; background:var(--surface); color:var(--muted); cursor:pointer; }
+    .conmutador button + button { border-left:1px solid var(--line); }
+    .conmutador button.on { background:var(--brand-head); color:#fff; }
+    .mun-et { font-size:12.5px; color:var(--ink-soft); display:inline-flex; align-items:center; gap:6px; cursor:pointer; }
+    .mun-et input { accent-color:var(--accent); }
+    .info-estado { font-size:12.5px; color:var(--muted); font-weight:500; font-variant-numeric:tabular-nums; }
+    .info-estado b { color:var(--ink); font-weight:700; }
+    .sep-flex { flex:1 1 auto; }
+    .btn-texto { font-family:var(--f-body); font-size:12px; font-weight:600; color:var(--accent); background:none; border:none; cursor:pointer; padding:6px 4px; }
+    .btn-texto:hover { text-decoration:underline; }
+
+    /* Leyenda que también filtra */
+    .tipos { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+    .tipo-chip {
+        display:inline-flex; align-items:center; gap:8px; font-family:var(--f-body); font-size:12.5px; font-weight:600;
+        padding:6px 12px 6px 9px; border-radius:var(--r-pill); border:1px solid var(--line); background:var(--surface-2);
+        color:var(--ink-soft); cursor:pointer; transition:opacity .15s ease, border-color .15s ease;
+    }
+    .tipo-chip:hover { border-color:var(--muted); }
+    .tipo-chip[aria-pressed="false"] { opacity:.45; text-decoration:line-through; }
+    .tipo-chip .pt { width:12px; height:12px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.25); flex:0 0 auto; }
+    .tipo-chip .pt.sup { width:15px; height:15px; }
+    .tipo-chip .n { font-variant-numeric:tabular-nums; color:var(--muted); font-weight:700; }
+    .tipo-nivel { font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); align-self:center; margin-right:2px; }
+
+    #mapa { height:620px; border-radius:var(--r-md); overflow:hidden; border:1px solid var(--line); background:var(--map-ground); z-index:1; }
+    .mapa-aviso { font-size:12px; color:var(--muted); margin:10px 0 0; }
+
+    /* Popup con todos los campos del Excel */
+    .leaflet-popup-content-wrapper { border-radius:var(--r-md); }
+    .leaflet-popup-content { margin:14px 16px; font-family:var(--f-body); }
+    .pop-tipo { display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:#33465F; margin-bottom:4px; }
+    .pop-tipo i { width:10px; height:10px; border-radius:50%; display:inline-block; }
+    .pop-nombre { font-family:var(--f-display); font-size:14.5px; font-weight:700; color:#18345D; line-height:1.3; margin-bottom:10px; }
+    .pop-tabla { border-collapse:collapse; width:100%; font-size:12px; line-height:1.45; }
+    .pop-tabla th { text-align:left; vertical-align:top; color:#64748B; font-weight:600; padding:4px 10px 4px 0; white-space:nowrap; width:1%; }
+    .pop-tabla td { color:#0F1E33; padding:4px 0; word-break:break-word; }
+    .pop-tabla tr + tr th, .pop-tabla tr + tr td { border-top:1px solid #E9EFF6; }
+    .pop-tabla td.vacio { color:#94A3B8; }
+    .pop-tabla td code { font-size:11px; color:#33465F; }
+    .pop-nota { margin-top:8px; font-size:11px; color:#B7791F; line-height:1.45; }
+    .pop-campo { font-size:12px; line-height:1.45; color:#0F1E33; word-break:break-word; }
+    .pop-campo + .pop-campo { margin-top:6px; padding-top:6px; border-top:1px solid #E9EFF6; }
+    .pop-campo span { display:block; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#64748B; }
+    .pop-campo code { font-size:11px; color:#33465F; }
+    .pop-campo em { color:#94A3B8; font-style:normal; }
+    .pop-chico .leaflet-popup-content { margin:9px 11px; }
+    .pop-chico .pop-nombre { font-size:12.5px; margin-bottom:6px; }
+    .pop-chico .pop-campo { font-size:11px; }
+    .pop-chico .pop-campo code { font-size:10px; }
+    .pop-chico .leaflet-popup-close-button { width:28px; height:28px; font-size:20px; line-height:26px; }
+
+    .coro-etq { background:none; border:0; box-shadow:none; padding:0; font:700 12px/1 Inter, Arial, sans-serif; white-space:nowrap; pointer-events:none; }
+    .coro-etq::before { display:none; }
+    .coro-etq-n { color:#111111; text-shadow:0 0 3px #fff, 0 0 3px #fff, 0 0 3px #fff; }
+    .coro-etq-b { color:#FFFFFF; text-shadow:0 0 3px rgba(0,0,0,.8), 0 0 3px rgba(0,0,0,.8); }
+
+    .pin { background:none; border:0; }
+    .pin span { display:block; border-radius:50%; border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.45); }
+    .marker-cluster-small, .marker-cluster-medium, .marker-cluster-large { background-color:rgba(24,52,93,.25); }
+    .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div { background-color:rgba(24,52,93,.88); color:#fff; font-family:Inter, Arial, sans-serif; font-weight:700; }
+    .marker-cluster-large div { background-color:rgba(240,128,19,.92); }
+
+    .coro-leyenda { background:rgba(255,255,255,.94); padding:8px 10px; border-radius:var(--r-sm); box-shadow:0 1px 4px rgba(0,0,0,.25); font:500 11px/1.4 Inter, Arial, sans-serif; color:#33465F; }
+    .coro-leyenda b { display:block; color:#18345D; margin-bottom:4px; }
+    .coro-leyenda .esc { display:flex; }
+    .coro-leyenda .esc i { width:22px; height:10px; display:block; }
+    .coro-leyenda .lim { display:flex; justify-content:space-between; font-variant-numeric:tabular-nums; }
+
+    footer { border-top:1px solid var(--line); background:var(--surface); padding-block:20px 30px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); text-align:center; font-size:12px; color:var(--muted); }
+    footer p { margin:2px 0; }
+    footer b { color:var(--ink-soft); }
+
+    @media (max-width: 820px) {
+        header { position:static; }
+        .header-content { grid-template-columns:auto 1fr; gap:11px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
+        .header-title-center { grid-column:1 / -1; grid-row:2; }
+        .header-right { justify-self:end; }
+        header h1 { font-size:16px; }
+        main { padding-block:18px 44px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
+        .panel-cuerpo { padding:15px; }
+        .panel-nota { display:none; }
+        section h2 { font-size:14px; }
+        #mapa { height:480px; }
+        .chart-barra input[type="search"] { width:100%; }
+        .chart-barra select { flex:1 1 160px; }
+        .sep-flex { display:none; }
+    }
+    @media (pointer: coarse) {
+        .conmutador button, .chart-barra select, .chart-barra input[type="search"], .tipo-chip { min-height:44px; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
+</style>
+
+</head>
+<body>
+<header>
+    <div class="header-content">
+        <div class="header-logo-box">
+            <img src="data:image/png;base64,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M5hT6Nu6AwBoaxBgVWqIDwLZx20zG2dzZA9cyva53MoXTvzXR0RePggIZE0vWo/KB0yq+iFL50wREt9J6Hx1hApz1YVfR6+Xparvs6x0zy1N/Lz3XVlXU2ozw5DtQLpwElxBU9vkcVp6q3dPcLpqkJtX+HswruTZy7GC11SuHRi0LZswr3ASjLJM3rJS1fdZs6/wb5ykZKIUai/D34Nx4nMiOG7DglBeWSfgBZzmuf/Dy+DE9+tw90daO/zNEwwSv/sSVPV92jGJVWplEMDJFD0qpWhl9Iq4/WX3E//7CFNqainVy0UA748cvD+BYWV0sWbV389Sw3O5YXg8YPXcQPTnpJXXvNxANNvAYUk4Ca6wh25SocC8FHrTtACAqgZ5giPbbOVRfTs4r2tSsSo7oahwEoxU9IWv4JcbhLc7AKD6AXvotvk95HIfYCp2steS3O1uwikEpfdeJxRvc4VeY//NtnMT8CB6vSid6Zsi30F4GZwktZlFuNeR6TsLL4JrFwjwFojQmb7JdU971uYgQO6bJy8ReVlXB7yK2+8/4sS/+eYpvUB9A7hVTM+u3F/pRcbULlrG4wHrEF4G57hDt8xgVKE3ZTvt8CK4DifBQKGvy0yMVPU97tAtMpCqgqp+UNEXmVfpCLifJCce1ScizwofqVdAhuyEQsLfgzH20FXVoGiQQaE3rgZHayfPS8/IcZ4V0LYLL4Lr8DI4Lvr9L4KdOdpdt489fsyTUjA2i3ASjBLfR8u3qKQJL4Nh2YCee45/LhMoDifBqYfXcaF3+kPe1+Hu5ZN1/fu+ZS7y0kRZCo6UlbW4UdWyFJWi5skdua5I1cU00aD32jZf7H4H+C72c3sa/JMTqgqYQ9vBLk6zFB/D/b39GYoR/oGR78G720J0DMFxSuoq4AYOmOEcinMf6famb4vvQVRMAUwhmOIO46Kvx2VMxfWxV1lXaFD2vSTIUiwt5fVn+vOY711OOR4wy9/jThWICyjm+hxxf08OIY9PDcjyOlYxR/YA/8bJqoJhcBMGKMYQnK+7EK+rgh7bTqe4guIaOxjjO1z5ev0V3Ou575Gicn3/qh+KfvdJ9zBwfzRm3r8vyvxkT7GTmF15mhaoSnlWi0r995B+z6z8s3Fcv5V43n1UVX2oeW4HmOHEFd9L7csXBQyBUZH3HCfXvz8vgnqXraZFHdoeBOgCGK8aOJVRZ/XZNMZzNVGqR5VVd/MwfXtd9XOCJ5u/v5E2jzm0HXyHzlIl/nviJrgeB++rmCN7gL9jBoeKa1+DFqImMX378Lmb+xvTpgyUqTqL9ncZv/tWMc/t4FH/Oec5AJbmQf85fz077qSAGl5DYv89z4ZqoFYHATD/0G9xDI00Ih41Ib3R9O1Jle+RKiKYrjtd1xzaDnZyr2DkcRVeBomrWEREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREVL//F+ZVdBOPg8N4AAAAAElFTkSuQmCC" alt="Coordinación de Seguridad — Gobierno de Jalisco" class="header-logo-cges">
+        </div>
+        <div class="header-title-center">
+            <span class="eyebrow">Centro de Mando · CGES Jalisco</span>
+            <h1>Escuelas de educación media superior y superior del AMG</h1>
+        </div>
+        <div class="header-right">
+            <button class="btn-icono" id="temaBtn" type="button" title="Cambiar entre modo claro y Dark Command Mode" aria-label="Cambiar tema">◐</button>
+        </div>
+    </div>
+</header>
+
+<main>
+    <section id="mapaSec">
+        <div class="panel-cab" role="button" tabindex="0" aria-expanded="true">
+            <span class="h2-marca"></span><h2>Mapa dinámico</h2>
+            <span class="panel-nota" id="notaTotal"></span>
+            <span class="panel-toggle">▾</span>
+        </div>
+        <div class="panel-cuerpo">
+            <div class="mun-intro">
+                <span class="mun-kicker">Georreferencia</span>
+                <p>Ubicaciones tomadas de <code>wkt_geom</code> (longitud y latitud en WGS84). Haga clic en un punto para ver la ficha completa de la institución.
+                   La leyenda de tipos funciona como filtro: un clic oculta o muestra esa categoría.</p>
+            </div>
+
+            <div class="chart-barra">
+                <div class="conmutador" id="vistaBtns" role="group" aria-label="Vista del mapa">
+                    <button type="button" data-vista="puntos" class="on">Puntos</button>
+                    <button type="button" data-vista="clusters">Clusters</button>
+                    <button type="button" data-vista="calor">Mapa de calor</button>
+                    <button type="button" data-vista="coropleta">Coropleta municipal</button>
+                </div>
+                <label class="mun-et"><input type="checkbox" id="chkLimites" checked> Límites municipales</label>
+                <span class="sep-flex"></span>
+                <span id="infoMapa" class="info-estado" aria-live="polite"></span>
+            </div>
+
+            <div class="tipos" id="tipos" role="group" aria-label="Filtrar por tipo de institución"></div>
+
+            <div class="chart-barra">
+                <select id="selMunicipio" aria-label="Filtrar por municipio"></select>
+                <input type="search" id="txtBuscar" placeholder="Buscar nombre, domicilio, clave SEP o RVOE" aria-label="Buscar institución">
+                <button type="button" class="btn-texto" id="btnLimpiar">Restablecer filtros</button>
+            </div>
+
+            <div id="mapa" role="region" aria-label="Mapa de escuelas del AMG"></div>
+            <p class="mapa-aviso" id="avisoMosaico" hidden>El mapa de calles de OpenStreetMap no cargó en esta vista: solo aparece cuando la página se abre desde su sitio web (GitHub Pages). Mientras tanto se muestran los límites municipales del Marco Geoestadístico INEGI como referencia.</p>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>Elaborado por: <b>CGES / DGAPP / AA</b> — Coordinación General Estratégica de Seguridad, Gobierno del Estado de Jalisco.</p>
+    <p>Base: <b>amg_educacion_consolidado</b>, hoja Instituciones (<span id="pieTotal"></span> registros). Límites municipales: Marco Geoestadístico INEGI.</p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+<script>
+(function () {
+    'use strict';
+    const BASE = {"campos":["wkt_geom","longitud","latitud","nombre","domicilio","tipo","municipio","clave_sep","acuerdo_rvoe","nivel_confianza","fuente"],"registros":[{"wkt_geom":"Point(-103.370515435641 20.676855561639)","longitud":-103.370515435641,"latitud":20.676855561639,"nombre":"Guadalajara Lamar","domicilio":"Av. Hidalgo No. 1540, Americana, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0152Z","acuerdo_rvoe":"001/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.359418205242 20.670912343601)","longitud":-103.359418205242,"latitud":20.670912343601,"nombre":"Instituto Vocacional Enrique Díaz de León","domicilio":"Av. Enrique Díaz de León No. 404, Americana, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0024E","acuerdo_rvoe":"008/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.37361 20.6780194)","longitud":-103.37361,"latitud":20.6780194,"nombre":"Centro Universitario UTEG Plantel Américas","domicilio":"Av. Américas No. 425, Ladrón de Guevara, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0339D","acuerdo_rvoe":"003/2025","nivel_confianza":"Alta","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.346385193684 20.653949287093)","longitud":-103.346385193684,"latitud":20.653949287093,"nombre":"Centro Universitario UTEG Plantel Campus","domicilio":"Av. Héroes Ferrocarrileros No. 1325, La Aurora, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0243R","acuerdo_rvoe":"004/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.379759669015 20.656866482765)","longitud":-103.379759669015,"latitud":20.656866482765,"nombre":"Centro Universitario UTEG Plantel Lázaro Cárdenas","domicilio":"Av. Lázaro Cárdenas No. 2351, Mercado de Abastos, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0242S","acuerdo_rvoe":"005/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.325630176498 20.652819113179)","longitud":-103.325630176498,"latitud":20.652819113179,"nombre":"Centro Universitario UTEG Plantel Olímpica","domicilio":"Boulevard Marcelino García Barragán No. 1610, Atlas, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0307L","acuerdo_rvoe":"008/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.273684840311 20.636085858865)","longitud":-103.273684840311,"latitud":20.636085858865,"nombre":"Centro Universitario UTEG Plantel Río Nilo","domicilio":"Av. Río Nilo No. 7546, Flores Magón, Tonalá, Jalisco","tipo":"Preparatoria Privada","municipio":"Tonalá","clave_sep":"14PBH0386O","acuerdo_rvoe":"006/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Tonalá"},{"wkt_geom":"Point(-103.354903055944 20.547332683816)","longitud":-103.354903055944,"latitud":20.547332683816,"nombre":"Centro Universitario UTEG Plantel Tlajomulco","domicilio":"Av. 1º de Mayo No. 1355, Concepción del Valle, Tlajomulco de Zúñiga, Jalisco","tipo":"Preparatoria Privada","municipio":"Tlajomulco de Zúñiga","clave_sep":"14PBH0458R","acuerdo_rvoe":"007/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Tlajomulco de Zúñiga"},{"wkt_geom":"Point(-103.379095544068 20.756379189982)","longitud":-103.379095544068,"latitud":20.756379189982,"nombre":"Centro Universitario UTEG Plantel Zapopan","domicilio":"Av. Parres Arias No. 145, El Vigía, Zapopan, Jalisco","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":"14PBH0243R","acuerdo_rvoe":"009/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Zapopan"},{"wkt_geom":"Point(-103.298643549578 20.667515732659)","longitud":-103.298643549578,"latitud":20.667515732659,"nombre":"Preparatoria San Andrés","domicilio":"Pedro María Anaya No. 2709, Los Mártires, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0014Y","acuerdo_rvoe":"011/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.4422103 20.5465433)","longitud":-103.4422103,"latitud":20.5465433,"nombre":"Escuela Preparatoria Tlaquepaque","domicilio":"Donato Guerra No. 265, Centro, Tlaquepaque, Jalisco","tipo":"Preparatoria Privada","municipio":"San Pedro Tlaquepaque","clave_sep":"14PBH0127A","acuerdo_rvoe":"014/2025","nivel_confianza":"Alta","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"San Pedro Tlaquepaque"},{"wkt_geom":"Point(-103.414077075123 20.675508466209)","longitud":-103.414077075123,"latitud":20.675508466209,"nombre":"Centro Humanístico Fray Antonio Alcalde A.C.","domicilio":"Av. Lázaro Cárdenas No. 4249, Camino Real, Zapopan, Jalisco","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":"14PBH0021H","acuerdo_rvoe":"016/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Zapopan"},{"wkt_geom":"Point(-103.330403899362 20.664472599871)","longitud":-103.330403899362,"latitud":20.664472599871,"nombre":"Preparatoria Anáhuac Revolución","domicilio":"Leonardo Oliva No. 201, General Real, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0081W","acuerdo_rvoe":"017/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.277678649536 20.682820543033)","longitud":-103.277678649536,"latitud":20.682820543033,"nombre":"Preparatoria Hermosa Provincia","domicilio":"Av. Elisa Flores No. 2270, Mtro. Aarón Joaquín, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0237G","acuerdo_rvoe":"018/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3991089 20.6004717)","longitud":-103.3991089,"latitud":20.6004717,"nombre":"Escuela Preparatoria de Santa María Tequepexpan","domicilio":"Zaragoza No. 73, Santa María Tequepexpan, Santa María Tequepexpan, Tlaquepaque, Jalisco","tipo":"Preparatoria Privada","municipio":"San Pedro Tlaquepaque","clave_sep":"14PBH0092B","acuerdo_rvoe":"019/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"San Pedro Tlaquepaque"},{"wkt_geom":"Point(-103.299658514233 20.661942605237)","longitud":-103.299658514233,"latitud":20.661942605237,"nombre":"Centro Educacional Tlaquepaque A.C.","domicilio":"Av. Del Parque No. 21, San Andrés, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0062H","acuerdo_rvoe":"021/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3782565 20.6114921)","longitud":-103.3782565,"latitud":20.6114921,"nombre":"Instituto América de Guadalajara A. C.","domicilio":"Galeana No. 346, Centro, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0128Z","acuerdo_rvoe":"022/2025","nivel_confianza":"Alta","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3879168 20.6407223)","longitud":-103.3879168,"latitud":20.6407223,"nombre":"Centro Escolar José María Morelos y Pavón A.C.","domicilio":"López de Legazpi No. 2248, Jardines de la Cruz, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0031O","acuerdo_rvoe":"023/2025","nivel_confianza":"Alta","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3392108 20.6775694)","longitud":-103.3392108,"latitud":20.6775694,"nombre":"Centro Universitario UNE Plantel Centro","domicilio":"Av. República No. 10, San Juan de Dios, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0230N","acuerdo_rvoe":"024/2025","nivel_confianza":"Alta","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.325678623899 20.684587825408)","longitud":-103.325678623899,"latitud":20.684587825408,"nombre":"Centro Universitario UNE Plantel Centro Médico","domicilio":"José María Lozano No. 1077, Postes Cuates, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0231M","acuerdo_rvoe":"025/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.4060677 20.6460476)","longitud":-103.4060677,"latitud":20.6460476,"nombre":"Centro Universitario UNE Plantel Milenio","domicilio":"Av. López Mateos Sur No. 4154, La Giralda, Zapopan, Jalisco","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":"14PBH0232L","acuerdo_rvoe":"026/2025","nivel_confianza":"Alta","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Zapopan"},{"wkt_geom":"Point(-103.4035276 20.6520655)","longitud":-103.4035276,"latitud":20.6520655,"nombre":"Centro Universitario UNE Plantel Plaza del Sol","domicilio":"Chimalhuacán No. 6, Ciudad del Sol, Zapopan, Jalisco","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":"14PBH0053Z","acuerdo_rvoe":"027/2025","nivel_confianza":"Alta","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Zapopan"},{"wkt_geom":"Point(-103.437366896978 20.76281051187)","longitud":-103.437366896978,"latitud":20.76281051187,"nombre":"Centro Universitario UNE Plantel Tesistán","domicilio":"Av. Juan Gil Preciado No. 3897, Hogares de Nuevo México, Zapopan, Jalisco","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":"14PBH0397U","acuerdo_rvoe":"146/2022","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Zapopan"},{"wkt_geom":"Point(-103.451810760168 20.577248335153)","longitud":-103.451810760168,"latitud":20.577248335153,"nombre":"Centro Universitario UNE Plantel Tlajomulco","domicilio":"Av. López Mateos Sur No. 10100, Los Gavilanes Poniente, Tlajomulco de Zúñiga, Jalisco","tipo":"Preparatoria Privada","municipio":"Tlajomulco de Zúñiga","clave_sep":"14PBH0346N","acuerdo_rvoe":"029/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Tlajomulco de Zúñiga"},{"wkt_geom":"Point(-103.320569434818 20.646029771606)","longitud":-103.320569434818,"latitud":20.646029771606,"nombre":"Centro Universitario UNE Plantel Tlaquepaque","domicilio":"Av. Boulevard Marcelino García Barragán No. 2056, Bosques del Boulevard, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0345O","acuerdo_rvoe":"030/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.244138128704 20.632395139259)","longitud":-103.244138128704,"latitud":20.632395139259,"nombre":"Centro Universitario UNE Plantel Tonalá","domicilio":"Av. Tonaltecas No.333, Agua Escondida, Tonalá, Jalisco","tipo":"Preparatoria Privada","municipio":"Tonalá","clave_sep":"14PBH0208L","acuerdo_rvoe":"031/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Tonalá"},{"wkt_geom":"Point(-103.3893399 20.7206991)","longitud":-103.3893399,"latitud":20.7206991,"nombre":"Centro Universitario UNE Plantel Zapopan","domicilio":"Andador 20 de Noviembre No. 197, Centro, Zapopan, Jalisco","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":"14PBH0286W","acuerdo_rvoe":"032/2025","nivel_confianza":"Alta","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Zapopan"},{"wkt_geom":"Point(-103.457633843885 20.556606747482)","longitud":-103.457633843885,"latitud":20.556606747482,"nombre":"Colegio Nuevo Córdoba A.C. Plantel Santa Anita","domicilio":"Ramon Corona No. 684 B, Santa Anita, Tlajomulco de Zúñiga, Jalisco","tipo":"Preparatoria Privada","municipio":"Tlajomulco de Zúñiga","clave_sep":"14PBH0337S","acuerdo_rvoe":"33/2005","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Tlajomulco de Zúñiga"},{"wkt_geom":"Point(-103.328499558947 20.682165683342)","longitud":-103.328499558947,"latitud":20.682165683342,"nombre":"Preparatoria Colegio Independencia","domicilio":"Jarauta No. 334, La Perla, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0044S","acuerdo_rvoe":"034/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3485136 20.6827498)","longitud":-103.3485136,"latitud":20.6827498,"nombre":"Colegio Reforma Secundaria y Preparatoria A.C.","domicilio":"Pedro Loza No. 925, Centro, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0016W","acuerdo_rvoe":"035/2025","nivel_confianza":"Alta","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.376744614624 20.64594813187)","longitud":-103.376744614624,"latitud":20.64594813187,"nombre":"Preparatoria Domingo de Alzola","domicilio":"Isla Curazao No. 2721, Colón, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0171O","acuerdo_rvoe":"037/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.122283 20.5797107)","longitud":-103.122283,"latitud":20.5797107,"nombre":"Escuela Preparatoria Parroquial San José de la Laja","domicilio":"Allende No. 40, La Laja, Centro, Zapotlanejo, Jalisco","tipo":"Preparatoria Privada","municipio":"Zapotlanejo","clave_sep":"14PBH0173M","acuerdo_rvoe":"039/2025","nivel_confianza":"Alta","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Zapotlanejo"},{"wkt_geom":"Point(-103.3606279 20.6726471)","longitud":-103.3606279,"latitud":20.6726471,"nombre":"Centro de Estudios Profesionales Jalisco","domicilio":"Prisciliano Sánchez No. 315, Centro, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0161H","acuerdo_rvoe":"040/2025","nivel_confianza":"Alta","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3656549 20.6932742)","longitud":-103.3656549,"latitud":20.6932742,"nombre":"Preparatoria Anáhuac Garibaldi","domicilio":"José Clemente Orozco No. 320, Villaseñor, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0061I","acuerdo_rvoe":"041/2025","nivel_confianza":"Alta","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.328130749673 20.701005249611)","longitud":-103.328130749673,"latitud":20.701005249611,"nombre":"Colegio República Mexicana","domicilio":"Calz. Independencia Norte No. 1743, Independencia, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0194Z","acuerdo_rvoe":"042/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.268033006819 20.623655035451)","longitud":-103.268033006819,"latitud":20.623655035451,"nombre":"Preparatoria Técnica Tlamatinime","domicilio":"Juan Jesús Posadas Ocampo No. 15, Santa Cruz de las Huertas, Tonalá, Jalisco","tipo":"Preparatoria Privada","municipio":"Tonalá","clave_sep":"14PBH0191B","acuerdo_rvoe":"043/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Tonalá"},{"wkt_geom":"Point(-103.3644065 20.7405701)","longitud":-103.3644065,"latitud":20.7405701,"nombre":"Colegio Sor Juana Inés de la Cruz","domicilio":"Av. Tabachines No. 2348, Tabachines, Zapopan, Jalisco","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":"14PBH0282T","acuerdo_rvoe":"045/2025","nivel_confianza":"Alta","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3792952 20.6755241)","longitud":-103.3792952,"latitud":20.6755241,"nombre":"Escuela Preparatoria Azteca","domicilio":"Morelos No. 570, Centro, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0338E","acuerdo_rvoe":"047/2025","nivel_confianza":"Alta","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3341515 20.6687935)","longitud":-103.3341515,"latitud":20.6687935,"nombre":"Preparatoria Reforma","domicilio":"Reforma No. 560, Centro, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0331L","acuerdo_rvoe":"048/2025","nivel_confianza":"Alta","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.325209361407 20.694918285199)","longitud":-103.325209361407,"latitud":20.694918285199,"nombre":"Centro Universitario de Monterrey","domicilio":"Doctor Atl No. 377, Monumental, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0308K","acuerdo_rvoe":"049/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.36623823427 20.706418324591)","longitud":-103.36623823427,"latitud":20.706418324591,"nombre":"Centro de Estudios Universitarios Veracruz Plantel Ávila Camacho","domicilio":"Av. Ávila Camacho No. 2089, Chapultepec Country, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0201S","acuerdo_rvoe":"050/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.40994206416 20.639894637577)","longitud":-103.40994206416,"latitud":20.639894637577,"nombre":"Centro de Estudios Universitarios Veracruz Plantel Loma Bonita","domicilio":"Av. López Mateos No. 2551, Loma Bonita, Zapopan, Jalisco","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":"14PBH0064F","acuerdo_rvoe":"051/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Zapopan"},{"wkt_geom":"Point(-103.297188870282 20.633925926235)","longitud":-103.297188870282,"latitud":20.633925926235,"nombre":"Centro de Estudios Universitarios Veracruz Plantel Tlaquepaque","domicilio":"Av. Francisco Silva Romero No. 395, Hidalgo, Tlaquepaque, Jalisco","tipo":"Preparatoria Privada","municipio":"San Pedro Tlaquepaque","clave_sep":"14PBH0205O","acuerdo_rvoe":"052/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"San Pedro Tlaquepaque"},{"wkt_geom":"Point(-103.2445428 20.6695775)","longitud":-103.2445428,"latitud":20.6695775,"nombre":"Centro de Estudios Universitarios Veracruz Plantel Tonalá","domicilio":"Hidalgo No. 180, Centro, Tonalá, Jalisco","tipo":"Preparatoria Privada","municipio":"Tonalá","clave_sep":"14PBH0208L","acuerdo_rvoe":"053/2025","nivel_confianza":"Alta","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Tonalá"},{"wkt_geom":"Point(-103.4542252 20.5549479)","longitud":-103.4542252,"latitud":20.5549479,"nombre":"Preparatoria Franciscana Santa Anita","domicilio":"Ramón Corona No. 250, Santa Anita, Tlaquepaque, Jalisco","tipo":"Preparatoria Privada","municipio":"San Pedro Tlaquepaque","clave_sep":"14PBH0424A","acuerdo_rvoe":"054/2025","nivel_confianza":"Alta","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Tlajomulco de Zúñiga"},{"wkt_geom":"Point(-103.354903055944 20.547332683816)","longitud":-103.354903055944,"latitud":20.547332683816,"nombre":"Centro de Educación Integral Paulo Freire","domicilio":"Av. 1º de Mayo No. 110, San José del Valle, Tlajomulco de Zúñiga, Jalisco","tipo":"Preparatoria Privada","municipio":"Tlajomulco de Zúñiga","clave_sep":"14PBH0429W","acuerdo_rvoe":"055/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Tlajomulco de Zúñiga"},{"wkt_geom":"Point(-103.406939 20.61617)","longitud":-103.406939,"latitud":20.61617,"nombre":"Centro Educativo Marsella","domicilio":"Río Tula No. 1605, Cerro del Tesoro, Tlaquepaque, Jalisco","tipo":"Preparatoria Privada","municipio":"San Pedro Tlaquepaque","clave_sep":"14PBH0455U","acuerdo_rvoe":"056/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"San Pedro Tlaquepaque"},{"wkt_geom":"Point(-103.3834379 20.6666737)","longitud":-103.3834379,"latitud":20.6666737,"nombre":"Instituto Educativo Jardines del Bosque","domicilio":"Av. Niños Héroes No. 2578, Jardines del Bosque, Guadalajara, Jalisco","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":"14PBH0457S","acuerdo_rvoe":"057/2025","nivel_confianza":"Alta","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.182014919773 20.517448644709)","longitud":-103.182014919773,"latitud":20.517448644709,"nombre":"CUES Estudios Especializados","domicilio":"Prolongación Juan Aldama No. 28, Centro, El Salto, Jalisco","tipo":"Preparatoria Privada","municipio":"El Salto","clave_sep":"14PBH0492Y","acuerdo_rvoe":"058/2025","nivel_confianza":"Media","fuente":"SEMS-UDG, Directorio de Escuelas Incorporadas con RVOE","_mun":"El Salto"},{"wkt_geom":"Point(-103.3162307 20.7335604)","longitud":-103.3162307,"latitud":20.7335604,"nombre":"Escuela Preparatoria de Jalisco","domicilio":"Escuela Preparatoria de Jalisco, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.314002 20.6829631)","longitud":-103.314002,"latitud":20.6829631,"nombre":"Escuela Preparatoria No. 2","domicilio":"Escuela Preparatoria No. 2, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3286 20.6575)","longitud":-103.3286,"latitud":20.6575,"nombre":"Escuela Preparatoria No. 3","domicilio":"Escuela Preparatoria No. 3, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3286 20.6575)","longitud":-103.3286,"latitud":20.6575,"nombre":"Escuela Preparatoria No. 4","domicilio":"Escuela Preparatoria No. 4, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3286 20.6575)","longitud":-103.3286,"latitud":20.6575,"nombre":"Escuela Preparatoria No. 5","domicilio":"Escuela Preparatoria No. 5, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3286 20.6575)","longitud":-103.3286,"latitud":20.6575,"nombre":"Escuela Preparatoria No. 6","domicilio":"Escuela Preparatoria No. 6, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3286 20.6575)","longitud":-103.3286,"latitud":20.6575,"nombre":"Escuela Preparatoria No. 7","domicilio":"Escuela Preparatoria No. 7, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3286 20.6575)","longitud":-103.3286,"latitud":20.6575,"nombre":"Escuela Preparatoria No. 8","domicilio":"Escuela Preparatoria No. 8, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3286 20.6575)","longitud":-103.3286,"latitud":20.6575,"nombre":"Escuela Preparatoria No. 9","domicilio":"Escuela Preparatoria No. 9, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3162307 20.7335604)","longitud":-103.3162307,"latitud":20.7335604,"nombre":"Escuela Preparatoria No. 10","domicilio":"Escuela Preparatoria No. 10, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3162307 20.7335604)","longitud":-103.3162307,"latitud":20.7335604,"nombre":"Escuela Preparatoria No. 11","domicilio":"Escuela Preparatoria No. 11, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3162307 20.7335604)","longitud":-103.3162307,"latitud":20.7335604,"nombre":"Escuela Preparatoria No. 12","domicilio":"Escuela Preparatoria No. 12, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3162307 20.7335604)","longitud":-103.3162307,"latitud":20.7335604,"nombre":"Escuela Preparatoria No. 13","domicilio":"Escuela Preparatoria No. 13, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3162307 20.7335604)","longitud":-103.3162307,"latitud":20.7335604,"nombre":"Escuela Preparatoria No. 14","domicilio":"Escuela Preparatoria No. 14, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3162307 20.7335604)","longitud":-103.3162307,"latitud":20.7335604,"nombre":"Escuela Preparatoria No. 15","domicilio":"Escuela Preparatoria No. 15, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3162307 20.7335604)","longitud":-103.3162307,"latitud":20.7335604,"nombre":"Escuela Preparatoria No. 16","domicilio":"Escuela Preparatoria No. 16, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3162307 20.7335604)","longitud":-103.3162307,"latitud":20.7335604,"nombre":"Escuela Preparatoria No. 17","domicilio":"Escuela Preparatoria No. 17, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3162307 20.7335604)","longitud":-103.3162307,"latitud":20.7335604,"nombre":"Escuela Preparatoria No. 18","domicilio":"Escuela Preparatoria No. 18, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3162307 20.7335604)","longitud":-103.3162307,"latitud":20.7335604,"nombre":"Escuela Preparatoria No. 19","domicilio":"Escuela Preparatoria No. 19, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3162307 20.7335604)","longitud":-103.3162307,"latitud":20.7335604,"nombre":"Escuela Preparatoria No. 20","domicilio":"Escuela Preparatoria No. 20, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3162307 20.7335604)","longitud":-103.3162307,"latitud":20.7335604,"nombre":"Escuela Preparatoria No. 21","domicilio":"Escuela Preparatoria No. 21, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.301733 20.6336406)","longitud":-103.301733,"latitud":20.6336406,"nombre":"Escuela Preparatoria No. 22 de Tlaquepaque","domicilio":"Escuela Preparatoria No. 22 de Tlaquepaque, San Pedro Tlaquepaque, Jalisco","tipo":"Preparatoria de la UDG","municipio":"San Pedro Tlaquepaque","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"San Pedro Tlaquepaque"},{"wkt_geom":"Point(-103.247897 20.653541)","longitud":-103.247897,"latitud":20.653541,"nombre":"Escuela Preparatoria de Tonalá","domicilio":"Escuela Preparatoria de Tonalá, Tonalá, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Tonalá","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Tonalá"},{"wkt_geom":"Point(-103.2481 20.6533)","longitud":-103.2481,"latitud":20.6533,"nombre":"Escuela Preparatoria de Tonalá Norte","domicilio":"Av. Juan Gil Preciado esq. Antonio Caso, Col. Basilio Vadillo, C.P. 45409, Tonalá, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Tonalá","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Alta","fuente":"UDG, Directorio institucional","_mun":"Tonalá"},{"wkt_geom":"Point(-103.2295 20.6335)","longitud":-103.2295,"latitud":20.6335,"nombre":"Escuela Preparatoria de Tonalá Sur","domicilio":"Lázaro Cárdenas S/N, Col. San Miguel de la Punta, C.P. 45409, Tonalá, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Tonalá","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Alta","fuente":"UDG, Directorio institucional","_mun":"Tonalá"},{"wkt_geom":"Point(-103.3274096 20.656571)","longitud":-103.3274096,"latitud":20.656571,"nombre":"Escuela Vocacional","domicilio":"Escuela Vocacional, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3259501 20.6593373)","longitud":-103.3259501,"latitud":20.6593373,"nombre":"Escuela Politécnica de Guadalajara","domicilio":"Escuela Politécnica de Guadalajara, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.33084587 20.674760767)","longitud":-103.33084587,"latitud":20.674760767,"nombre":"Escuela Politécnica Ing. Jorge Matute Remus","domicilio":"Escuela Politécnica Ing. Jorge Matute Remus, Guadalajara, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.188326 20.518107)","longitud":-103.188326,"latitud":20.518107,"nombre":"Escuela Preparatoria Regional de El Salto","domicilio":"Escuela Preparatoria Regional de El Salto, El Salto, Jalisco","tipo":"Preparatoria de la UDG","municipio":"El Salto","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"El Salto"},{"wkt_geom":"Point(-103.4346746 20.4642091)","longitud":-103.4346746,"latitud":20.4642091,"nombre":"Escuela Preparatoria Regional de Tlajomulco de Zúñiga","domicilio":"Escuela Preparatoria Regional de Tlajomulco de Zúñiga, Tlajomulco de Zúñiga, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Tlajomulco de Zúñiga","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Tlajomulco de Zúñiga"},{"wkt_geom":"Point(-103.36781 20.57674)","longitud":-103.36781,"latitud":20.57674,"nombre":"Escuela Preparatoria Regional de Toluquilla","domicilio":"Escuela Preparatoria Regional de Toluquilla, San Pedro Tlaquepaque, Jalisco","tipo":"Preparatoria de la UDG","municipio":"San Pedro Tlaquepaque","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"San Pedro Tlaquepaque"},{"wkt_geom":"Point(-103.0680272 20.6332891)","longitud":-103.0680272,"latitud":20.6332891,"nombre":"Escuela Preparatoria Regional de Zapotlanejo","domicilio":"Escuela Preparatoria Regional de Zapotlanejo, Zapotlanejo, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Zapotlanejo","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Zapotlanejo"},{"wkt_geom":"Point(-103.2175 20.4376)","longitud":-103.2175,"latitud":20.4376,"nombre":"Escuela Preparatoria Regional de Ixtlahuacán de los Membrillos","domicilio":"Escuela Preparatoria Regional de Ixtlahuacán de los Membrillos, Ixtlahuacán de los Membrillos, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Ixtlahuacán de los Membrillos","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Ixtlahuacán de los Membrillos"},{"wkt_geom":"Point(-103.3618 20.54)","longitud":-103.3618,"latitud":20.54,"nombre":"Escuela Preparatoria de San José del Valle de Tlajomulco de Zúñiga","domicilio":"Escuela Preparatoria de San José del Valle de Tlajomulco de Zúñiga, Tlajomulco de Zúñiga, Jalisco","tipo":"Preparatoria de la UDG","municipio":"Tlajomulco de Zúñiga","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"UDG, Directorio institucional","_mun":"Tlajomulco de Zúñiga"},{"wkt_geom":"Point(-103.396982119009 20.73971939893)","longitud":-103.396982119009,"latitud":20.73971939893,"nombre":"Centro Universitario de Ciencias Económico Administrativas (CUCEA)","domicilio":"Periférico Norte 799, Núcleo Universitario Los Belenes, Zapopan, Jalisco","tipo":"Universidad (o Centro universitario de la UDG)","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Zapopan"},{"wkt_geom":"Point(-103.327100446134 20.655149491809)","longitud":-103.327100446134,"latitud":20.655149491809,"nombre":"Centro Universitario de Ciencias Exactas e Ingenierías (CUCEI)","domicilio":"Blvd. Marcelino García Barragán 1421, Olímpica, Guadalajara, Jalisco","tipo":"Universidad (o Centro universitario de la UDG)","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3259763 20.6942473)","longitud":-103.3259763,"latitud":20.6942473,"nombre":"Centro Universitario de Ciencias de la Salud (CUCS)","domicilio":"Sierra Mojada 950, Independencia, Guadalajara, Jalisco","tipo":"Universidad (o Centro universitario de la UDG)","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Alta","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.380001 20.7352568)","longitud":-103.380001,"latitud":20.7352568,"nombre":"Centro Universitario de Ciencias Sociales y Humanidades (CUCSH)","domicilio":"Av. José Parres Arias 150, Los Belenes, Zapopan, Jalisco","tipo":"Universidad (o Centro universitario de la UDG)","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Alta","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3123911 20.7402138)","longitud":-103.3123911,"latitud":20.7402138,"nombre":"Centro Universitario de Arte, Arquitectura y Diseño (CUAAD)","domicilio":"Calzada Independencia Norte 5075, Huentitán El Bajo, Guadalajara, Jalisco","tipo":"Universidad (o Centro universitario de la UDG)","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Alta","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.507283020028 20.745962344051)","longitud":-103.507283020028,"latitud":20.745962344051,"nombre":"Centro Universitario de Ciencias Biológicas y Agropecuarias (CUCBA)","domicilio":"Camino Ramón Padilla Sánchez 2100, Nextipac, Zapopan, Jalisco","tipo":"Universidad (o Centro universitario de la UDG)","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Zapopan"},{"wkt_geom":"Point(-103.237333941292 20.674033959112)","longitud":-103.237333941292,"latitud":20.674033959112,"nombre":"Centro Universitario de Tonalá (CUTonalá)","domicilio":"Anillo Periférico Norte 555, Ejido San José Tateposco, Tonalá, Jalisco","tipo":"Universidad (o Centro universitario de la UDG)","municipio":"Tonalá","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Tonalá"},{"wkt_geom":"Point(-103.412818309043 20.464686610767)","longitud":-103.412818309043,"latitud":20.464686610767,"nombre":"Centro Universitario de Tlajomulco (CUTlajomulco)","domicilio":"Carretera Tlajomulco-Santa Fe km 3.5, Tlajomulco de Zúñiga, Jalisco","tipo":"Universidad (o Centro universitario de la UDG)","municipio":"Tlajomulco de Zúñiga","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Tlajomulco de Zúñiga"},{"wkt_geom":"Point(-103.41713407236 20.610686638677)","longitud":-103.41713407236,"latitud":20.610686638677,"nombre":"Instituto Tecnológico y de Estudios Superiores de Occidente (ITESO)","domicilio":"Periférico Sur Manuel Gómez Morín 8585, Santa María Tequepexpan, Tlaquepaque, Jalisco","tipo":"Universidad o Centro Universitario Privado","municipio":"San Pedro Tlaquepaque","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"San Pedro Tlaquepaque"},{"wkt_geom":"Point(-103.414932062577 20.70280849035)","longitud":-103.414932062577,"latitud":20.70280849035,"nombre":"Universidad Autónoma de Guadalajara (UAG), Campus Guadalajara","domicilio":"Av. Patria 1201, Lomas del Valle, Zapopan, Jalisco","tipo":"Universidad o Centro Universitario Privado","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Zapopan"},{"wkt_geom":"Point(-103.4129316 20.6592955)","longitud":-103.4129316,"latitud":20.6592955,"nombre":"Universidad del Valle de Atemajac (UNIVA), Campus Guadalajara","domicilio":"Av. Tepeyac 4800, Prados Tepeyac, Zapopan, Jalisco","tipo":"Universidad o Centro Universitario Privado","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Alta","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Zapopan"},{"wkt_geom":"Point(-103.454085 20.7337478)","longitud":-103.454085,"latitud":20.7337478,"nombre":"Tecnológico de Monterrey, Campus Guadalajara","domicilio":"Av. General Ramón Corona 2514, Nuevo México, Zapopan, Jalisco","tipo":"Universidad o Centro Universitario Privado","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Alta","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Zapopan"},{"wkt_geom":"Point(-103.443980889136 20.682090856453)","longitud":-103.443980889136,"latitud":20.682090856453,"nombre":"Universidad Panamericana, Campus Guadalajara","domicilio":"Álvaro del Portillo 49, Ciudad Granja, Zapopan, Jalisco","tipo":"Universidad o Centro Universitario Privado","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3735032 20.6806946)","longitud":-103.3735032,"latitud":20.6806946,"nombre":"Universidad Tecnológica de Guadalajara (UTEG), Plantel Américas","domicilio":"Av. Américas 425, Ladrón de Guevara, Guadalajara, Jalisco","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Alta","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.346385193684 20.653949287093)","longitud":-103.346385193684,"latitud":20.653949287093,"nombre":"Universidad Tecnológica de Guadalajara (UTEG), Plantel Campus","domicilio":"Av. Héroes Ferrocarrileros 1325, La Aurora, Guadalajara, Jalisco","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.379759669015 20.656866482765)","longitud":-103.379759669015,"latitud":20.656866482765,"nombre":"Universidad Tecnológica de Guadalajara (UTEG), Plantel Lázaro Cárdenas","domicilio":"Av. Lázaro Cárdenas 2351, Mercado de Abastos, Guadalajara, Jalisco","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.325630176498 20.652819113179)","longitud":-103.325630176498,"latitud":20.652819113179,"nombre":"Universidad Tecnológica de Guadalajara (UTEG), Plantel Olímpica","domicilio":"Blvd. Marcelino García Barragán 1610, Atlas, Guadalajara, Jalisco","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.273684840311 20.636085858865)","longitud":-103.273684840311,"latitud":20.636085858865,"nombre":"Universidad Tecnológica de Guadalajara (UTEG), Plantel Río Nilo","domicilio":"Av. Río Nilo 7546, Flores Magón, Tonalá, Jalisco","tipo":"Universidad o Centro Universitario Privado","municipio":"Tonalá","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Tonalá"},{"wkt_geom":"Point(-103.354903055944 20.547332683816)","longitud":-103.354903055944,"latitud":20.547332683816,"nombre":"Universidad Tecnológica de Guadalajara (UTEG), Plantel Tlajomulco","domicilio":"Av. 1º de Mayo 1355, Concepción del Valle, Tlajomulco de Zúñiga, Jalisco","tipo":"Universidad o Centro Universitario Privado","municipio":"Tlajomulco de Zúñiga","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Tlajomulco de Zúñiga"},{"wkt_geom":"Point(-103.3884321 20.7300061)","longitud":-103.3884321,"latitud":20.7300061,"nombre":"Universidad Tecnológica de Guadalajara (UTEG), Plantel Zapopan","domicilio":"Av. Parres Arias 145, El Vigía, Zapopan, Jalisco","tipo":"Universidad o Centro Universitario Privado","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Alta","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Zapopan"},{"wkt_geom":"Point(-103.406699 20.635376)","longitud":-103.406699,"latitud":20.635376,"nombre":"Universidad Marista de Guadalajara","domicilio":"Av. Marcelino Champagnat 2981, Loma Bonita, Zapopan, Jalisco","tipo":"Universidad o Centro Universitario Privado","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Alta","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3916927 20.7295204)","longitud":-103.3916927,"latitud":20.7295204,"nombre":"Universidad Cuauhtémoc Guadalajara","domicilio":"Av. del Bajío 590, El Bajío, Zapopan, Jalisco","tipo":"Universidad o Centro Universitario Privado","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Alta","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Zapopan"},{"wkt_geom":"Point(-103.4129316 20.6592955)","longitud":-103.4129316,"latitud":20.6592955,"nombre":"Universidad del Valle de México, Campus Zapopan","domicilio":"Av. Tepeyac 4800, Prados Tepeyac, Zapopan, Jalisco","tipo":"Universidad o Centro Universitario Privado","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Alta","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Zapopan"},{"wkt_geom":"Point(-103.342827243424 20.687460303627)","longitud":-103.342827243424,"latitud":20.687460303627,"nombre":"Instituto Tecnológico de Guadalajara","domicilio":"José Luis Calderón 777, Olímpica, Guadalajara, Jalisco","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.358993 20.6751128)","longitud":-103.358993,"latitud":20.6751128,"nombre":"Universidad de Guadalajara, Centro Universitario de Guadalajara (CUGDL)","domicilio":"Av. Juárez 976, Centro, Guadalajara, Jalisco","tipo":"Universidad (o Centro universitario de la UDG)","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Alta","fuente":"Directorio institucional / sitio oficial de la institución","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3720821 20.6418996)","longitud":-103.3720821,"latitud":20.6418996,"nombre":"Prepa 5 UdeG","domicilio":"Calle Vasco de Gama 2590, Colón Industrial, Guadalajara, Jalisco, 44930","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.31348 20.637932)","longitud":-103.31348,"latitud":20.637932,"nombre":"Preparatoria de Tlaquepaque | SEMS | UdeG","domicilio":"Calle Francisco De Miranda 69, Tlaquepaque, Jalisco, 45500","tipo":"Preparatoria de la UDG","municipio":"San Pedro Tlaquepaque","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"San Pedro Tlaquepaque"},{"wkt_geom":"Point(-103.360182 20.7323535)","longitud":-103.360182,"latitud":20.7323535,"nombre":"Escuela Preparatoria No. 8 UdeG","domicilio":"Anillo Periférico Norte Manuel Gómez Morín 1900, Constitución, Zapopan, Jalisco, 45180","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3797175 20.7457211)","longitud":-103.3797175,"latitud":20.7457211,"nombre":"Escuela Preparatoria No. 10","domicilio":"Unidad San José del Bajío, Zapopan, Jalisco, 45180","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.4771508 20.6283391)","longitud":-103.4771508,"latitud":20.6283391,"nombre":"Escuela Preparatoria No. 20 UdeG","domicilio":"El Fortín, Zapopan, Jalisco, 45066","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3466812 20.6844251)","longitud":-103.3466812,"latitud":20.6844251,"nombre":"Universidad de Guadalajara - Sistema de Educacion Media Superior","domicilio":"Calle Liceo 496, Centro Barranquitas, Guadalajara, Jalisco, 44200","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3015588 20.6331458)","longitud":-103.3015588,"latitud":20.6331458,"nombre":"Escuela Preparatoria No. 22 UdeG","domicilio":"Calle Pedro Coronel, Lomas de Tlaquepaque, San Pedro Tlaquepaque, Jalisco, 45500","tipo":"Preparatoria Privada","municipio":"San Pedro Tlaquepaque","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"San Pedro Tlaquepaque"},{"wkt_geom":"Point(-103.3252972 20.6402266)","longitud":-103.3252972,"latitud":20.6402266,"nombre":"Escuela Preparatoria No. 4 U de G","domicilio":"Calle Río Torrecillas, Jardines del Rosario, Guadalajara, Jalisco, 44890","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3495671 20.6941845)","longitud":-103.3495671,"latitud":20.6941845,"nombre":"Centro Universitario de Guadalajara (CUGDL)","domicilio":"Artesanos, Sagrada Familia, Jesús, Guadalajara, Jalisco, 44260","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3770107 20.6813589)","longitud":-103.3770107,"latitud":20.6813589,"nombre":"UDG - Centro de Estudios Urbanos - Dr. Jorge Camberos Garibi","domicilio":"Calle Garibaldi 1865, Guadalajara, Jalisco, 44600","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.349823 20.6932315)","longitud":-103.349823,"latitud":20.6932315,"nombre":"Centro Universitario de Guadalajara (CUGuadalajara)","domicilio":"Avenida De Los Maestros 1060, Alcalde Barranquitas, Guadalajara, Jalisco, 44260","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3817889 20.6714557)","longitud":-103.3817889,"latitud":20.6714557,"nombre":"Centro de Estudios e Investigaciones en Comportamiento UdeG","domicilio":"Calle Francisco de Quevedo 180, Arcos Vallarta, Guadalajara, Jalisco, 44130","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3321438 20.6865839)","longitud":-103.3321438,"latitud":20.6865839,"nombre":"Centro Universitario de Ciencias de la Salud","domicilio":"Independencia Oriente, Guadalajara, Jalisco, 44340","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3788462 20.743897)","longitud":-103.3788462,"latitud":20.743897,"nombre":"UDG CIEE","domicilio":"Anillo Perif. Nte. Manuel Gómez Morín 799, Unidad San José del Bajío, Zapopan, Jalisco, 45180","tipo":"Universidad (o Centro universitario de la UDG)","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3763831 20.7415683)","longitud":-103.3763831,"latitud":20.7415683,"nombre":"CUCSH Centro Universitario de Ciencias Sociales y Humanidades","domicilio":"Constitución, Zapopan, Jalisco, 45180","tipo":"Universidad (o Centro universitario de la UDG)","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3521859 20.6789736)","longitud":-103.3521859,"latitud":20.6789736,"nombre":"Centro Universitario Torres Andrade","domicilio":"Calle Mariano de la Bárcena 168, Zona Centro, Guadalajara, Jalisco, 44100","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.4015694 20.7462449)","longitud":-103.4015694,"latitud":20.7462449,"nombre":"Prepa eduSmart plantel Zapopan","domicilio":"Avenida de la Mancha 739, Lomas de Zapopan, Zapopan, Jalisco, 45130","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3910686 20.7193855)","longitud":-103.3910686,"latitud":20.7193855,"nombre":"AMERICAN ACADEMY","domicilio":"Calle Sofía Camarena Jiménez 37, Centro, Zapopan, Jalisco, 45100","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3913591 20.7519756)","longitud":-103.3913591,"latitud":20.7519756,"nombre":"Prepa Zapopan CICREI","domicilio":"Prolongación Mariano Otero 815, Fraccionamiento Real del Bosque, Zapopan, Jalisco, 45130","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3485427 20.6729255)","longitud":-103.3485427,"latitud":20.6729255,"nombre":"Preparatoria en Guadalajara | Prepa CEI | Centro de Estudios Intensivos","domicilio":"Calle Prisciliano Sánchez 336, Zona Centro, Guadalajara, Jalisco, 44100","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3628393 20.7113434)","longitud":-103.3628393,"latitud":20.7113434,"nombre":"Instituto América Jardines del Country A.C.","domicilio":"Calle Parián 2223, Lagos del Country, Guadalajara, Jalisco, 44214","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.4180829 20.7307)","longitud":-103.4180829,"latitud":20.7307,"nombre":"Vanguardia Académica Santa Margarita","domicilio":"Avenida Santa Margarita 2644, Quintas de La Soberana, Zapopan, Jalisco, 45138","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.4025192 20.706913)","longitud":-103.4025192,"latitud":20.706913,"nombre":"Instituto Alpes San Javier","domicilio":"Calle Paseo del Edén 2459, Colinas de San Javier, Guadalajara, Jalisco, 44665","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3999487 20.6533155)","longitud":-103.3999487,"latitud":20.6533155,"nombre":"Colegio Guadalajara Sagrado Corazón","domicilio":"Calle Rincón de los Ahuehuetes 1942, Del Sol, Zapopan, Jalisco, 45055","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3549032 20.7227343)","longitud":-103.3549032,"latitud":20.7227343,"nombre":"INSTITUTO FEDERICO DE AGUINAGA","domicilio":"Calle Occidental 39, La Palmita, Zapopan, Jalisco, 45190","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.383336 20.70628)","longitud":-103.383336,"latitud":20.70628,"nombre":"Enrique de Ossó El Colegio Teresiano en Guadalajara","domicilio":"Calle Brasilia 2601, Colomos Providencia, Guadalajara, Jalisco, 44660","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3674038 20.7309295)","longitud":-103.3674038,"latitud":20.7309295,"nombre":"CECYTEJ Valentín Gomez Farías","domicilio":"Avenida Obreros de Cananea 1027, Constitución, Zapopan, Jalisco, 45180","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3850691 20.7411354)","longitud":-103.3850691,"latitud":20.7411354,"nombre":"Instituto HAS","domicilio":"Anillo Periférico Manuel Gómez Morín, Unidad San José del Bajío, Zapopan, Jalisco, 45180","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3805902 20.7458452)","longitud":-103.3805902,"latitud":20.7458452,"nombre":"Escuela Politécnica Ing. Jorge Matute Remus","domicilio":"Unidad San José del Bajío, Zapopan, Jalisco, 45180","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3672835 20.7236803)","longitud":-103.3672835,"latitud":20.7236803,"nombre":"Escuela Preparatoria Regional De Cihuatlán Módulo San Patricio","domicilio":"Calle Pablo Quiroga 269, Habitacional Seattle, Zapopan, Jalisco, 45180","tipo":"Preparatoria de la UDG","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.41191 20.7389397)","longitud":-103.41191,"latitud":20.7389397,"nombre":"Escuela Preparatoria No. 7","domicilio":"School No, Arcos de Zapopan, Zapopan, Jalisco, 45130","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3679906 20.7286601)","longitud":-103.3679906,"latitud":20.7286601,"nombre":"Preparatoria CET","domicilio":"Privada Manuel M. Diéguez, Constitución, Zapopan, Jalisco, 45180","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.380921 20.7407681)","longitud":-103.380921,"latitud":20.7407681,"nombre":"Centro Universitario de Ciencias Económico Administrativas","domicilio":"Constitución, Zapopan, Jalisco, 45180","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.2286111 20.5666667)","longitud":-103.2286111,"latitud":20.5666667,"nombre":"CUTONALA Centro Universitario de Tonalá - UDG","domicilio":"Nuevo Perif. Ote 555, Jalisco, 45420","tipo":"Universidad (o Centro universitario de la UDG)","municipio":null,"clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Tonalá"},{"wkt_geom":"Point(-103.3598928 20.6754691)","longitud":-103.3598928,"latitud":20.6754691,"nombre":"Cursos UDG","domicilio":"Calle Pedro Moreno 1029, Americana, Guadalajara, Jalisco, 44200","tipo":"Universidad (o Centro universitario de la UDG)","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3589506 20.6747257)","longitud":-103.3589506,"latitud":20.6747257,"nombre":"Universidad de Guadalajara","domicilio":"Avenida Juárez 975, Zona Centro, Guadalajara, Jalisco, 44200","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.391251 20.7277129)","longitud":-103.391251,"latitud":20.7277129,"nombre":"UNO UNIVERSIDAD","domicilio":"Centro, Zapopan, Jalisco, 45100","tipo":"Universidad o Centro Universitario Privado","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3512653 20.6793851)","longitud":-103.3512653,"latitud":20.6793851,"nombre":"Universidad Metropolitana de Guadalajara","domicilio":"Calle Contreras Medellín 192, Zona Centro, Guadalajara, Jalisco, 44100","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3596476 20.7312259)","longitud":-103.3596476,"latitud":20.7312259,"nombre":"Universidad Pedagógica Nacional","domicilio":"Constitución, Zapopan, Jalisco, 45180","tipo":"Universidad o Centro Universitario Privado","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.4182113 20.6946316)","longitud":-103.4182113,"latitud":20.6946316,"nombre":"Universidad Autónoma de Guadalajara","domicilio":"Avenida Patria 1201, Villa Universitaria, Zapopan, Jalisco, 45110","tipo":"Universidad o Centro Universitario Privado","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3946015 20.7217058)","longitud":-103.3946015,"latitud":20.7217058,"nombre":"Universidad Azteca de Guadalajara Plantel Zapopan","domicilio":"Privada Allende 347, República, Zapopan, Jalisco, 45146","tipo":"Universidad o Centro Universitario Privado","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.3598317 20.6710886)","longitud":-103.3598317,"latitud":20.6710886,"nombre":"UNIVERSIDAD ENRIQUE DIAZ DE LEON","domicilio":"Avenida Enrique Díaz de León S, Americana, Guadalajara, Jalisco, 44160","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3544737 20.675798)","longitud":-103.3544737,"latitud":20.675798,"nombre":"UNISITE","domicilio":"Avenida Federalismo Sur 47, Zona Centro, Guadalajara, Jalisco, 44100","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3963475 20.6738455)","longitud":-103.3963475,"latitud":20.6738455,"nombre":"LAMAR UNIVERSIDAD CAMPUS VALLARTA","domicilio":"Avenida Inglaterra 3184, Vallarta Poniente, Guadalajara, Jalisco, 44110","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3703902 20.6772504)","longitud":-103.3703902,"latitud":20.6772504,"nombre":"Universidad LAMAR Campus Hidalgo I","domicilio":"Calle Manuel M. Diéguez 1540, Guadalajara, Jalisco, 44600","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3885991 20.6718829)","longitud":-103.3885991,"latitud":20.6718829,"nombre":"UNAG","domicilio":"Avenida De La Paz 2861, Vallarta, Guadalajara, Jalisco, 44130","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3734863 20.6741803)","longitud":-103.3734863,"latitud":20.6741803,"nombre":"Universidad Metropolitana de Occidente - Plantel Vallarta","domicilio":"Avenida Ignacio L. Vallarta 1835, Americana, Guadalajara, Jalisco, 44600","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.38209 20.666842)","longitud":-103.38209,"latitud":20.666842,"nombre":"Universidad UNIVER - Jardines del Bosque","domicilio":"Avenida Niños Héroes 2578, Jardines del Bosque, Guadalajara, Jalisco, 44520","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3712965 20.6766298)","longitud":-103.3712965,"latitud":20.6766298,"nombre":"CUO Centro Universitario de Occidente","domicilio":"Avenida Hidalgo, Ladrón de Guevara, Guadalajara, Jalisco, 44600","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3505131 20.6798322)","longitud":-103.3505131,"latitud":20.6798322,"nombre":"Escuela Preparatoria de Jalisco","domicilio":"Calle Jesús González Ortega, Zona Centro, Guadalajara, Jalisco, 44200","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3473788 20.6707489)","longitud":-103.3473788,"latitud":20.6707489,"nombre":"PREPA CEJAL","domicilio":"Avenida 16 De Septiembre 410, Zona Centro, Guadalajara, Jalisco, 44100","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3847819 20.6659046)","longitud":-103.3847819,"latitud":20.6659046,"nombre":"Tu prepa jalisco","domicilio":"Avenida de los Arcos 746, Jardines del Bosque, Guadalajara, Jalisco, 44520","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3379113 20.6830421)","longitud":-103.3379113,"latitud":20.6830421,"nombre":"Universidad Metropolitana de Occidente - Plantel Calzada","domicilio":"Calzada Independencia Norte, El Retiro, Guadalajara, Jalisco, 44280","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3810511 20.7380878)","longitud":-103.3810511,"latitud":20.7380878,"nombre":"Centro Cultural Universitario","domicilio":"Anillo Periférico Norte Manuel Gómez Morín 1695, De La Azalea, Zapopan, Jalisco, 45180","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.4728066 20.7016643)","longitud":-103.4728066,"latitud":20.7016643,"nombre":"Tecnológico Superior de Jalisco Zapopan","domicilio":"Camino Arenero 1101, Zapopan, Jalisco, 45017","tipo":"Preparatoria Privada","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.4203758 20.6617432)","longitud":-103.4203758,"latitud":20.6617432,"nombre":"UNIVA campus Guadalajara","domicilio":"Calle Pintores 891, Jardines Tepeyac, Zapopan, Jalisco, 45034","tipo":"Universidad o Centro Universitario Privado","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.4146601 20.6083796)","longitud":-103.4146601,"latitud":20.6083796,"nombre":"ITESO","domicilio":"Camino al Iteso, Santa María Tequepexpan, San Pedro Tlaquepaque, Jalisco, 45604","tipo":"Universidad o Centro Universitario Privado","municipio":"San Pedro Tlaquepaque","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"San Pedro Tlaquepaque"},{"wkt_geom":"Point(-103.3739893 20.6764774)","longitud":-103.3739893,"latitud":20.6764774,"nombre":"Universidad Sämann de Jalisco","domicilio":"Av. Miguel Hidalgo Y Costilla 1717, Ladrón de Guevara, Guadalajara, Jalisco, 44650","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.2537431 20.6182089)","longitud":-103.2537431,"latitud":20.6182089,"nombre":"Instituto Universitario Hispanoamericano","domicilio":"Avenida Tonalá 275, Colonia Francisco Villa, Tonalá, Jalisco, 45402","tipo":"Preparatoria Privada","municipio":"Tonalá","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Tonalá"},{"wkt_geom":"Point(-103.3486122 20.675288)","longitud":-103.3486122,"latitud":20.675288,"nombre":"Universidad América Latina - Campus Centro","domicilio":"Avenida Revolución 380, Zona Centro, Guadalajara, Jalisco, 44100","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3155362 20.6552454)","longitud":-103.3155362,"latitud":20.6552454,"nombre":"Instituto Universitario Hispanoamericano (Plantel Revolución)","domicilio":"Calle General Carlos Fuero 475, Magaña, Guadalajara, Jalisco, 44800","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3476693 20.6749467)","longitud":-103.3476693,"latitud":20.6749467,"nombre":"Universidad De La Ciénega","domicilio":"Avenida 16 De Septiembre 16, Zona Centro, Guadalajara, Jalisco, 44100","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3445129 20.6763648)","longitud":-103.3445129,"latitud":20.6763648,"nombre":"Universidad De Guadalajara","domicilio":"Calle Calpulalpán, Zona Centro, Guadalajara, Jalisco, 44100","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3254497 20.6548611)","longitud":-103.3254497,"latitud":20.6548611,"nombre":"Centro Universitario de Ciencias Exactas e Ingenierías (CUCEI)","domicilio":"Calzada Olímpica, Olímpica, Guadalajara, Jalisco, 44840","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.3549825 20.6175867)","longitud":-103.3549825,"latitud":20.6175867,"nombre":"Universidad Tecnológica de Jalisco","domicilio":"Calle Luis J. Jiménez 577, Miravalle, Guadalajara, Jalisco, 44970","tipo":"Universidad o Centro Universitario Privado","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.4384665 20.5903348)","longitud":-103.4384665,"latitud":20.5903348,"nombre":"LAMAR UNIVERSIDAD Campus Palomar","domicilio":"Calle El Palomar 398, Tulipanes, La Tijera, Jalisco, 45234","tipo":"Universidad o Centro Universitario Privado","municipio":"La Tijera","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Tlajomulco de Zúñiga"},{"wkt_geom":"Point(-103.4097036 20.6397782)","longitud":-103.4097036,"latitud":20.6397782,"nombre":"Universidad UNIVER - Loma Bonita","domicilio":"av. adolfo lópez mateos sur 2551, Loma Bonita, Zapopan, Jalisco, 45086","tipo":"Universidad o Centro Universitario Privado","municipio":"Zapopan","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Zapopan"},{"wkt_geom":"Point(-103.4079814 20.608208)","longitud":-103.4079814,"latitud":20.608208,"nombre":"UVM Campus Guadalajara Sur - Universidad del Valle de México","domicilio":"Anillo Periférico Sur Manuel Gómez Morín 8100, Santa María Tequepexpan, San Pedro Tlaquepaque, Jalisco, 45604","tipo":"Universidad o Centro Universitario Privado","municipio":"San Pedro Tlaquepaque","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"San Pedro Tlaquepaque"},{"wkt_geom":"Point(-103.2969578 20.6340624)","longitud":-103.2969578,"latitud":20.6340624,"nombre":"Universidad UNIVER - Tlaquepaque","domicilio":"Calle Francisco Silva Romero 395, Hidalgo, San Pedro Tlaquepaque, Jalisco, 45540","tipo":"Universidad o Centro Universitario Privado","municipio":"San Pedro Tlaquepaque","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"San Pedro Tlaquepaque"},{"wkt_geom":"Point(-103.353092 20.6028027)","longitud":-103.353092,"latitud":20.6028027,"nombre":"CU Tlaquepaque CERRO DEL CUATRO","domicilio":"Calle Teatro de las Américas 323, Toluquilla, San Pedro Tlaquepaque, Jalisco, 45599","tipo":"Preparatoria Privada","municipio":"San Pedro Tlaquepaque","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"San Pedro Tlaquepaque"},{"wkt_geom":"Point(-103.3099299 20.6393409)","longitud":-103.3099299,"latitud":20.6393409,"nombre":"Universidad Azteca de Guadalajara Plantel Tlaquepaque","domicilio":"Calle INDEPENDENCIA 13, Centro, San Pedro Tlaquepaque, Jalisco, 45500","tipo":"Universidad o Centro Universitario Privado","municipio":"San Pedro Tlaquepaque","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"San Pedro Tlaquepaque"},{"wkt_geom":"Point(-103.3000631 20.6279085)","longitud":-103.3000631,"latitud":20.6279085,"nombre":"UNITEC Guadalajara - Universidad Tecnológica de México","domicilio":"Calzada Lázaro Cárdenas 405, Lomas de Tlaquepaque, San Pedro Tlaquepaque, Jalisco, 45559","tipo":"Universidad o Centro Universitario Privado","municipio":"San Pedro Tlaquepaque","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"San Pedro Tlaquepaque"},{"wkt_geom":"Point(-103.301454 20.6329306)","longitud":-103.301454,"latitud":20.6329306,"nombre":"Universidad Pedagógica Nacional Unidad 142 Tlaquepaque","domicilio":"Calle Pedro Coronel, Lomas de Tlaquepaque, San Pedro Tlaquepaque, Jalisco, 45559","tipo":"Universidad o Centro Universitario Privado","municipio":"San Pedro Tlaquepaque","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"San Pedro Tlaquepaque"},{"wkt_geom":"Point(-103.4145507 20.6133117)","longitud":-103.4145507,"latitud":20.6133117,"nombre":"Tecmilenio Campus Guadalajara Sur","domicilio":"Paisajes del Tesoro, San Pedro Tlaquepaque, Jalisco, 45608","tipo":"Preparatoria Privada","municipio":"San Pedro Tlaquepaque","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"San Pedro Tlaquepaque"},{"wkt_geom":"Point(-103.3267198 20.6539479)","longitud":-103.3267198,"latitud":20.6539479,"nombre":"UDN Tlaquepaque","domicilio":"Boulevard General Marcelino García Barragán 1421, Olímpica, Guadalajara, Jalisco, 44840","tipo":"Preparatoria Privada","municipio":"Guadalajara","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Guadalajara"},{"wkt_geom":"Point(-103.4139776 20.4654172)","longitud":-103.4139776,"latitud":20.4654172,"nombre":"CUTlajomulco (Centro Universitario de Tlajomulco)","domicilio":"Calle Tlajomulco Santa Fe, Lomas de Tejeda, Jalisco, 45640","tipo":"Preparatoria Privada","municipio":null,"clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Tlajomulco de Zúñiga"},{"wkt_geom":"Point(-103.4476221 20.4759011)","longitud":-103.4476221,"latitud":20.4759011,"nombre":"CESLAM - Centro de Educación Superior de las Américas","domicilio":"Calle Flaviano Ramos N, Centro, Tlajomulco de Zúñiga, Jalisco, 45640","tipo":"Preparatoria Privada","municipio":"Tlajomulco de Zúñiga","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Tlajomulco de Zúñiga"},{"wkt_geom":"Point(-103.5331819 20.4830966)","longitud":-103.5331819,"latitud":20.4830966,"nombre":"Universidad Tecnológica de la Zona Metropolitana de Guadalajara","domicilio":"Villa Las Flores, Villa Las Flores, Jalisco, 45644","tipo":"Universidad o Centro Universitario Privado","municipio":"Villa Las Flores","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Tlajomulco de Zúñiga"},{"wkt_geom":"Point(-103.4211284 20.4428805)","longitud":-103.4211284,"latitud":20.4428805,"nombre":"Instituto Tecnologico de Tlajomulco","domicilio":"Jalisco, 45660","tipo":"Universidad o Centro Universitario Privado","municipio":null,"clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Tlajomulco de Zúñiga"},{"wkt_geom":"Point(-103.3567986 20.5475762)","longitud":-103.3567986,"latitud":20.5475762,"nombre":"UTEG Campus Tlajomulco","domicilio":"Avenida Concepción, Real del Valle, Jalisco, 45654","tipo":"Preparatoria Privada","municipio":null,"clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Tlajomulco de Zúñiga"},{"wkt_geom":"Point(-103.4494469 20.4751362)","longitud":-103.4494469,"latitud":20.4751362,"nombre":"UMJ","domicilio":"Calle Hidalgo Poniente 53A, Centro, Tlajomulco de Zúñiga, Jalisco, 45640","tipo":"Preparatoria Privada","municipio":"Tlajomulco de Zúñiga","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Tlajomulco de Zúñiga"},{"wkt_geom":"Point(-103.4473682 20.4774011)","longitud":-103.4473682,"latitud":20.4774011,"nombre":"INSTITUTO DE ESTUDIOS SUPERIORES DE OCCIDENTE","domicilio":"Calle Flaviano Ramos Norte 95, Centro, Tlajomulco de Zúñiga, Jalisco, 45640","tipo":"Preparatoria Privada","municipio":"Tlajomulco de Zúñiga","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Tlajomulco de Zúñiga"},{"wkt_geom":"Point(-103.2409773 20.6278969)","longitud":-103.2409773,"latitud":20.6278969,"nombre":"Universidad América Latina","domicilio":"Calle HIDALGO 180, Tonalá, Tonalá, Jalisco, 45400","tipo":"Universidad o Centro Universitario Privado","municipio":"Tonalá","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Tonalá"},{"wkt_geom":"Point(-103.249404 20.627158)","longitud":-103.249404,"latitud":20.627158,"nombre":"Universidad Azteca de Guadalajara Plantel Tonalá","domicilio":"Calle EMILIANO ZAPATA 312, Tonaltecas II, Tonalá, Jalisco, 45400","tipo":"Universidad o Centro Universitario Privado","municipio":"Tonalá","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Tonalá"},{"wkt_geom":"Point(-103.2721651 20.6343178)","longitud":-103.2721651,"latitud":20.6343178,"nombre":"UTEG Plantel Río Nilo","domicilio":"Avenida Río Nilo 7546, Lomas del Camichín, Tonalá, Jalisco, 45403","tipo":"Preparatoria Privada","municipio":"Tonalá","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Tonalá"},{"wkt_geom":"Point(-103.2270999 20.5655443)","longitud":-103.2270999,"latitud":20.5655443,"nombre":"Facultad de Medicina - Centro Universitario de Tonalá | UDG","domicilio":"Nuevo Perif. Ote 555, Jalisco, 45420","tipo":"Preparatoria Privada","municipio":null,"clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Tonalá"},{"wkt_geom":"Point(-103.2702402 20.6328744)","longitud":-103.2702402,"latitud":20.6328744,"nombre":"UDN Tonalá","domicilio":"Avenida Río Nilo 3590, Lomas del Camichín, Tonalá, Jalisco, 45403","tipo":"Preparatoria Privada","municipio":"Tonalá","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Tonalá"},{"wkt_geom":"Point(-103.2420054 20.6258408)","longitud":-103.2420054,"latitud":20.6258408,"nombre":"UVIC - Universidad Virtual de Certificación","domicilio":"Tonalá, Tonalá, Jalisco, 45400","tipo":"Universidad o Centro Universitario Privado","municipio":"Tonalá","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Tonalá"},{"wkt_geom":"Point(-103.2412261 20.6276741)","longitud":-103.2412261,"latitud":20.6276741,"nombre":"Universidad UNIVER - Tonalá","domicilio":"Calle Hidalgo 180-A, Tonalá, Jalisco, 45400","tipo":"Universidad o Centro Universitario Privado","municipio":"Tonalá","clave_sep":null,"acuerdo_rvoe":null,"nivel_confianza":"Media","fuente":"CSV adjunto del usuario","_mun":"Tonalá"}]};
+    const GEO = {"type":"FeatureCollection","features":[{"type":"Feature","properties":{"cve":"051","nom":"Juanacatlán"},"geometry":{"type":"Polygon","coordinates":[[[-103.1303,20.5684],[-103.1352,20.5563],[-103.1311,20.5517],[-103.1322,20.5468],[-103.1179,20.5441],[-103.0965,20.5302],[-103.109,20.518],[-103.099,20.5135],[-103.093,20.5186],[-103.089,20.5182],[-103.0945,20.4833],[-103.081,20.4877],[-103.0913,20.4161],[-103.0843,20.4004],[-103.1216,20.4055],[-103.1432,20.4229],[-103.1447,20.4437],[-103.1632,20.4551],[-103.1721,20.4531],[-103.1996,20.4589],[-103.2106,20.4802],[-103.1906,20.5029],[-103.1761,20.5029],[-103.1734,20.5125],[-103.1761,20.5134],[-103.1695,20.523],[-103.1704,20.5326],[-103.1657,20.5391],[-103.1648,20.5488],[-103.162,20.5487],[-103.1619,20.5529],[-103.1481,20.5577],[-103.1481,20.5698],[-103.137,20.5718],[-103.1303,20.5684]]]}},{"type":"Feature","properties":{"cve":"044","nom":"Ixtlahuacán de los Membrillos"},"geometry":{"type":"Polygon","coordinates":[[[-103.21,20.4787],[-103.1996,20.4589],[-103.1721,20.4531],[-103.1632,20.4551],[-103.1441,20.4431],[-103.1432,20.4229],[-103.1215,20.4062],[-103.1235,20.3942],[-103.1343,20.3954],[-103.1366,20.3883],[-103.1273,20.3869],[-103.1256,20.3612],[-103.1463,20.3358],[-103.1571,20.3439],[-103.1581,20.3365],[-103.1689,20.3358],[-103.174,20.3323],[-103.1777,20.3367],[-103.1842,20.3349],[-103.1847,20.3273],[-103.1954,20.3258],[-103.2305,20.338],[-103.2438,20.3392],[-103.2489,20.3368],[-103.2717,20.3416],[-103.2823,20.3383],[-103.2863,20.3327],[-103.2898,20.3486],[-103.295,20.3559],[-103.2891,20.3621],[-103.29,20.3693],[-103.2943,20.3694],[-103.2943,20.3756],[-103.2969,20.3761],[-103.2972,20.3966],[-103.2908,20.3977],[-103.2831,20.4087],[-103.2622,20.42],[-103.2622,20.4258],[-103.258,20.4299],[-103.2619,20.4349],[-103.2611,20.4419],[-103.2562,20.4363],[-103.2551,20.429],[-103.2407,20.4318],[-103.249,20.4515],[-103.2186,20.4568],[-103.2263,20.4676],[-103.2202,20.4684],[-103.218,20.4754],[-103.21,20.4787]]]}},{"type":"Feature","properties":{"cve":"039","nom":"Guadalajara"},"geometry":{"type":"Polygon","coordinates":[[[-103.3123,20.7526],[-103.2869,20.7381],[-103.2803,20.7261],[-103.2806,20.72],[-103.2743,20.7109],[-103.2658,20.7056],[-103.2706,20.6902],[-103.2638,20.6685],[-103.2677,20.6641],[-103.2697,20.6451],[-103.2875,20.6409],[-103.3207,20.6463],[-103.3179,20.6425],[-103.3198,20.6328],[-103.3247,20.6263],[-103.3291,20.628],[-103.3328,20.6222],[-103.3301,20.6189],[-103.3359,20.613],[-103.3398,20.6147],[-103.3403,20.6093],[-103.3465,20.6084],[-103.3523,20.6153],[-103.3658,20.6154],[-103.3688,20.6106],[-103.3841,20.6113],[-103.3874,20.6037],[-103.3894,20.613],[-103.3962,20.6131],[-103.3899,20.6208],[-103.3991,20.6262],[-103.3951,20.6422],[-103.3999,20.6429],[-103.3993,20.6505],[-103.3936,20.6548],[-103.3989,20.6571],[-103.3973,20.6594],[-103.4026,20.6657],[-103.4,20.6744],[-103.4027,20.6749],[-103.4037,20.6816],[-103.4008,20.6817],[-103.3982,20.6907],[-103.4051,20.6926],[-103.3995,20.6991],[-103.4066,20.7114],[-103.3902,20.7098],[-103.3442,20.7159],[-103.3411,20.7231],[-103.33,20.7295],[-103.3256,20.7375],[-103.3263,20.7449],[-103.3123,20.7526]]]}},{"type":"Feature","properties":{"cve":"097","nom":"Tlajomulco de Zúñiga"},"geometry":{"type":"Polygon","coordinates":[[[-103.4727,20.5977],[-103.4483,20.5967],[-103.4485,20.5943],[-103.4309,20.5881],[-103.4301,20.5793],[-103.4576,20.5505],[-103.4507,20.5414],[-103.4491,20.5462],[-103.4442,20.5449],[-103.446,20.5404],[-103.4356,20.5385],[-103.4322,20.5411],[-103.4357,20.5438],[-103.4328,20.5435],[-103.431,20.5493],[-103.4345,20.5507],[-103.4321,20.5588],[-103.3988,20.5513],[-103.3923,20.5629],[-103.36,20.5724],[-103.358,20.5719],[-103.3636,20.5588],[-103.3609,20.5556],[-103.3314,20.5539],[-103.33,20.5482],[-103.3242,20.5472],[-103.3199,20.5499],[-103.3129,20.5423],[-103.2845,20.5327],[-103.2856,20.5269],[-103.2708,20.5294],[-103.2645,20.5154],[-103.2669,20.5085],[-103.2546,20.5119],[-103.2469,20.5068],[-103.2437,20.495],[-103.2363,20.4931],[-103.2333,20.4967],[-103.2212,20.496],[-103.2159,20.4988],[-103.198,20.4963],[-103.2118,20.4774],[-103.218,20.4754],[-103.2197,20.4687],[-103.2263,20.4676],[-103.2186,20.4568],[-103.249,20.4515],[-103.2407,20.4318],[-103.2551,20.429],[-103.2562,20.4363],[-103.2611,20.4419],[-103.2619,20.4349],[-103.258,20.4299],[-103.2622,20.4258],[-103.2622,20.42],[-103.2831,20.4087],[-103.2888,20.4008],[-103.3083,20.4019],[-103.3105,20.3918],[-103.3156,20.3981],[-103.328,20.3927],[-103.3339,20.387],[-103.3341,20.3822],[-103.3432,20.3686],[-103.3525,20.368],[-103.3588,20.3618],[-103.3831,20.3646],[-103.418,20.3597],[-103.4345,20.3641],[-103.443,20.3723],[-103.4559,20.3741],[-103.4654,20.3848],[-103.4825,20.3952],[-103.5063,20.4049],[-103.52,20.4062],[-103.5281,20.4113],[-103.5399,20.4068],[-103.5428,20.4111],[-103.5486,20.4065],[-103.5475,20.4148],[-103.5616,20.4474],[-103.5703,20.4586],[-103.5692,20.4625],[-103.5874,20.4809],[-103.596,20.4835],[-103.5895,20.4929],[-103.5949,20.494],[-103.5919,20.4994],[-103.5966,20.5102],[-103.5906,20.5115],[-103.5886,20.5203],[-103.5718,20.5249],[-103.5838,20.5298],[-103.5659,20.5629],[-103.5545,20.5672],[-103.5436,20.5854],[-103.5352,20.5926],[-103.4727,20.5977]]]}},{"type":"Feature","properties":{"cve":"120","nom":"Zapopan"},"geometry":{"type":"Polygon","coordinates":[[[-103.5218,20.9981],[-103.5078,20.9825],[-103.478,20.9862],[-103.4646,20.9802],[-103.4596,20.9699],[-103.4524,20.9728],[-103.4347,20.9648],[-103.4325,20.949],[-103.4365,20.9479],[-103.4356,20.9427],[-103.4383,20.9399],[-103.4357,20.9358],[-103.4306,20.9346],[-103.4299,20.9377],[-103.4224,20.9404],[-103.4035,20.9589],[-103.3995,20.9511],[-103.3959,20.9542],[-103.3947,20.9444],[-103.3788,20.9537],[-103.3681,20.9291],[-103.3606,20.9245],[-103.3558,20.9137],[-103.3518,20.9121],[-103.3517,20.8925],[-103.342,20.8843],[-103.3303,20.8648],[-103.3326,20.8582],[-103.3254,20.8456],[-103.3332,20.8324],[-103.3255,20.8179],[-103.334,20.8026],[-103.3282,20.8019],[-103.3217,20.7927],[-103.3248,20.7881],[-103.3231,20.7828],[-103.3068,20.7792],[-103.3071,20.7654],[-103.3144,20.7565],[-103.3134,20.7507],[-103.3263,20.7449],[-103.3256,20.7375],[-103.33,20.7295],[-103.3411,20.7231],[-103.3442,20.7159],[-103.3902,20.7098],[-103.4065,20.7117],[-103.3995,20.6991],[-103.4051,20.6926],[-103.3982,20.6907],[-103.4008,20.6817],[-103.4037,20.6816],[-103.4027,20.6749],[-103.4,20.6744],[-103.4026,20.6657],[-103.3973,20.6594],[-103.3989,20.6571],[-103.3935,20.6539],[-103.3993,20.6505],[-103.3999,20.6429],[-103.3951,20.6422],[-103.404,20.621],[-103.4004,20.6206],[-103.4085,20.6208],[-103.4172,20.6161],[-103.4234,20.62],[-103.4259,20.6163],[-103.4191,20.6054],[-103.4182,20.5886],[-103.4235,20.5847],[-103.4485,20.5943],[-103.4483,20.5967],[-103.4761,20.598],[-103.5352,20.5926],[-103.5328,20.601],[-103.5357,20.6045],[-103.5625,20.6157],[-103.5674,20.6144],[-103.5733,20.6066],[-103.5972,20.6037],[-103.6005,20.6114],[-103.5969,20.6152],[-103.6019,20.6353],[-103.6169,20.639],[-103.6165,20.6417],[-103.6088,20.6413],[-103.6069,20.6445],[-103.6105,20.6507],[-103.621,20.6514],[-103.6246,20.6564],[-103.6157,20.6619],[-103.6118,20.6743],[-103.615,20.6804],[-103.6124,20.6899],[-103.6152,20.6928],[-103.6274,20.6867],[-103.6514,20.6874],[-103.6595,20.7037],[-103.6577,20.7122],[-103.6348,20.7182],[-103.6363,20.7001],[-103.629,20.6938],[-103.6217,20.6922],[-103.6172,20.695],[-103.6199,20.7053],[-103.6171,20.7097],[-103.6207,20.7125],[-103.6182,20.7152],[-103.623,20.7177],[-103.623,20.7219],[-103.618,20.7281],[-103.6109,20.7296],[-103.6111,20.7347],[-103.6048,20.7396],[-103.604,20.7468],[-103.6095,20.7519],[-103.6105,20.7667],[-103.6172,20.7697],[-103.6232,20.7686],[-103.6311,20.7542],[-103.639,20.7535],[-103.6393,20.7508],[-103.6518,20.755],[-103.6485,20.7651],[-103.6509,20.767],[-103.6557,20.7678],[-103.6639,20.7603],[-103.6649,20.7685],[-103.6602,20.7737],[-103.6622,20.7778],[-103.6591,20.7838],[-103.661,20.7938],[-103.64,20.8028],[-103.6453,20.8062],[-103.6466,20.8181],[-103.6544,20.8368],[-103.6504,20.8385],[-103.6451,20.8473],[-103.6459,20.8537],[-103.6397,20.8589],[-103.6405,20.8675],[-103.6317,20.8705],[-103.6377,20.88],[-103.6333,20.8858],[-103.6425,20.8879],[-103.6553,20.9041],[-103.6517,20.9163],[-103.6337,20.9292],[-103.6156,20.9619],[-103.6017,20.9647],[-103.5822,20.957],[-103.574,20.9676],[-103.5612,20.9636],[-103.5492,20.9701],[-103.5467,20.9807],[-103.5274,20.9881],[-103.5255,20.996],[-103.5218,20.9981]]]}},{"type":"Feature","properties":{"cve":"098","nom":"San Pedro Tlaquepaque"},"geometry":{"type":"Polygon","coordinates":[[[-103.3207,20.6463],[-103.2822,20.6412],[-103.2867,20.6263],[-103.2814,20.6241],[-103.2838,20.6143],[-103.2573,20.6118],[-103.2561,20.6024],[-103.2601,20.5876],[-103.2569,20.5845],[-103.2563,20.5872],[-103.2404,20.5832],[-103.2396,20.573],[-103.2455,20.571],[-103.2538,20.5786],[-103.2543,20.5649],[-103.2677,20.5668],[-103.2668,20.5697],[-103.2832,20.5704],[-103.2842,20.5797],[-103.2866,20.5733],[-103.29,20.5744],[-103.2885,20.5799],[-103.3041,20.581],[-103.306,20.5768],[-103.3122,20.5747],[-103.3189,20.5852],[-103.3316,20.5783],[-103.3317,20.5538],[-103.3609,20.5556],[-103.3633,20.5629],[-103.358,20.5719],[-103.3632,20.5726],[-103.3923,20.5629],[-103.3988,20.5513],[-103.4321,20.5588],[-103.4345,20.5507],[-103.431,20.5493],[-103.4328,20.5435],[-103.4357,20.5438],[-103.432,20.5413],[-103.4356,20.5385],[-103.446,20.5404],[-103.4447,20.5451],[-103.4491,20.5462],[-103.4498,20.5413],[-103.4547,20.5439],[-103.4576,20.5505],[-103.4301,20.5793],[-103.4309,20.5881],[-103.4235,20.5847],[-103.4182,20.5886],[-103.4191,20.6054],[-103.4259,20.6161],[-103.4234,20.62],[-103.4172,20.6161],[-103.4085,20.6208],[-103.4019,20.6194],[-103.4005,20.6213],[-103.404,20.621],[-103.4009,20.6334],[-103.3967,20.6366],[-103.3991,20.6262],[-103.3899,20.6208],[-103.3962,20.6131],[-103.3894,20.613],[-103.3874,20.6037],[-103.3841,20.6113],[-103.3688,20.6106],[-103.3658,20.6154],[-103.3523,20.6153],[-103.3465,20.6084],[-103.3403,20.6093],[-103.3398,20.6147],[-103.3359,20.613],[-103.3301,20.6189],[-103.3328,20.6222],[-103.3291,20.628],[-103.3247,20.6263],[-103.3209,20.6308],[-103.3179,20.6425],[-103.3207,20.6463]]]}},{"type":"Feature","properties":{"cve":"101","nom":"Tonalá"},"geometry":{"type":"Polygon","coordinates":[[[-103.2657,20.7055],[-103.2518,20.7008],[-103.2406,20.7037],[-103.236,20.702],[-103.2266,20.6978],[-103.225,20.6915],[-103.2035,20.6854],[-103.2018,20.6804],[-103.1926,20.6758],[-103.1819,20.6593],[-103.1846,20.6558],[-103.184,20.648],[-103.1884,20.6443],[-103.1852,20.6289],[-103.175,20.6307],[-103.171,20.6225],[-103.1629,20.6184],[-103.1454,20.6237],[-103.1399,20.6218],[-103.1476,20.606],[-103.1445,20.5996],[-103.1467,20.5889],[-103.1434,20.5844],[-103.147,20.5812],[-103.1451,20.5776],[-103.1409,20.5781],[-103.1413,20.5725],[-103.137,20.5718],[-103.149,20.5688],[-103.1477,20.5583],[-103.1626,20.5522],[-103.17,20.5318],[-103.1788,20.5313],[-103.1812,20.534],[-103.1858,20.5645],[-103.2133,20.5648],[-103.215,20.5525],[-103.2384,20.5624],[-103.2543,20.5649],[-103.2538,20.5786],[-103.2455,20.571],[-103.2394,20.574],[-103.2404,20.5832],[-103.2563,20.5872],[-103.2569,20.5845],[-103.2601,20.5876],[-103.2561,20.6024],[-103.2573,20.6118],[-103.2838,20.6143],[-103.2814,20.6241],[-103.2867,20.6263],[-103.2831,20.6397],[-103.2697,20.6451],[-103.2677,20.6641],[-103.2638,20.6682],[-103.2706,20.6902],[-103.2657,20.7055]]]}},{"type":"Feature","properties":{"cve":"124","nom":"Zapotlanejo"},"geometry":{"type":"Polygon","coordinates":[[[-103.0585,20.7962],[-103.0299,20.7958],[-103.0247,20.7925],[-103.0269,20.765],[-103.0421,20.7558],[-103.0351,20.7557],[-103.0234,20.7488],[-103.0285,20.7434],[-103.0247,20.7367],[-103.0222,20.7357],[-103.018,20.7424],[-103.0029,20.7344],[-103.0054,20.7231],[-102.9993,20.7153],[-102.9922,20.7131],[-102.9931,20.7041],[-102.9891,20.7031],[-102.9932,20.6956],[-102.9908,20.6882],[-102.9724,20.7015],[-102.9588,20.7068],[-102.9585,20.6959],[-102.9517,20.7008],[-102.9472,20.6984],[-102.9474,20.687],[-102.9234,20.6777],[-102.9132,20.6665],[-102.894,20.6536],[-102.8934,20.6445],[-102.9012,20.6472],[-102.9026,20.6443],[-102.9152,20.645],[-102.9206,20.6193],[-102.9173,20.6198],[-102.9166,20.6161],[-102.9105,20.6132],[-102.886,20.6101],[-102.8997,20.5923],[-102.8728,20.5971],[-102.8698,20.5737],[-102.8743,20.5642],[-102.8767,20.5649],[-102.8831,20.5479],[-102.8984,20.5501],[-102.9075,20.5479],[-102.9113,20.5352],[-102.9179,20.533],[-102.9185,20.5276],[-102.9096,20.5258],[-102.907,20.5195],[-102.929,20.5092],[-102.9335,20.5036],[-102.9542,20.5026],[-102.9769,20.5166],[-103.009,20.5294],[-103.0129,20.5117],[-103.0225,20.5104],[-103.0277,20.5142],[-103.0345,20.5137],[-103.0312,20.5119],[-103.0363,20.5109],[-103.0324,20.5078],[-103.0353,20.5046],[-103.0307,20.4996],[-103.0344,20.4923],[-103.0499,20.49],[-103.0772,20.4959],[-103.081,20.4877],[-103.0945,20.4833],[-103.089,20.5182],[-103.093,20.5186],[-103.099,20.5135],[-103.109,20.518],[-103.0965,20.5302],[-103.1179,20.5441],[-103.1322,20.5468],[-103.1311,20.5517],[-103.1352,20.5563],[-103.1303,20.5684],[-103.1413,20.5725],[-103.1409,20.5781],[-103.1467,20.5799],[-103.1434,20.5844],[-103.1467,20.5889],[-103.1445,20.5996],[-103.1476,20.606],[-103.1399,20.6218],[-103.1454,20.6237],[-103.1629,20.6184],[-103.171,20.6225],[-103.175,20.6307],[-103.1852,20.6289],[-103.1884,20.6443],[-103.184,20.648],[-103.1846,20.6558],[-103.1819,20.6593],[-103.1926,20.6758],[-103.2018,20.6804],[-103.2035,20.6854],[-103.225,20.6915],[-103.2266,20.6978],[-103.236,20.702],[-103.2406,20.7037],[-103.2518,20.7008],[-103.2698,20.7071],[-103.2806,20.72],[-103.2833,20.7303],[-103.2285,20.7144],[-103.2107,20.7305],[-103.1775,20.7351],[-103.1451,20.7565],[-103.1335,20.7561],[-103.1201,20.7631],[-103.1065,20.7653],[-103.0994,20.7595],[-103.0833,20.7598],[-103.0858,20.7795],[-103.0793,20.7898],[-103.0585,20.7962]]]}},{"type":"Feature","properties":{"cve":"002","nom":"Acatlán de Juárez"},"geometry":{"type":"Polygon","coordinates":[[[-103.6542,20.5045],[-103.6374,20.4946],[-103.6371,20.4883],[-103.6272,20.4838],[-103.6144,20.4883],[-103.5874,20.4809],[-103.5694,20.4627],[-103.5703,20.4586],[-103.5616,20.4474],[-103.5475,20.4148],[-103.5486,20.4065],[-103.5428,20.4111],[-103.5399,20.4068],[-103.5366,20.4085],[-103.5363,20.4059],[-103.5483,20.4043],[-103.5425,20.3962],[-103.5464,20.3943],[-103.5403,20.3864],[-103.5467,20.3796],[-103.5478,20.3715],[-103.5404,20.3517],[-103.5672,20.3407],[-103.5802,20.3497],[-103.5915,20.3493],[-103.5907,20.3323],[-103.5938,20.3376],[-103.613,20.3343],[-103.6135,20.3835],[-103.6186,20.3856],[-103.6217,20.3825],[-103.6298,20.4092],[-103.6249,20.4105],[-103.6214,20.4179],[-103.6444,20.4112],[-103.6497,20.4249],[-103.6553,20.4199],[-103.6561,20.4252],[-103.6596,20.4227],[-103.6751,20.4356],[-103.682,20.4496],[-103.6816,20.4601],[-103.6875,20.4655],[-103.686,20.5012],[-103.6658,20.5001],[-103.66,20.5047],[-103.6542,20.5045]]]}},{"type":"Feature","properties":{"cve":"070","nom":"El Salto"},"geometry":{"type":"Polygon","coordinates":[[[-103.3188,20.585],[-103.3122,20.5747],[-103.306,20.5768],[-103.3041,20.581],[-103.2885,20.5799],[-103.29,20.5744],[-103.2866,20.5733],[-103.2842,20.5797],[-103.2832,20.5704],[-103.2668,20.5697],[-103.2677,20.5668],[-103.2384,20.5624],[-103.215,20.5525],[-103.2133,20.5648],[-103.1858,20.5645],[-103.1812,20.534],[-103.1688,20.5299],[-103.1695,20.523],[-103.1761,20.5134],[-103.1734,20.5125],[-103.1757,20.5034],[-103.1878,20.504],[-103.1998,20.4959],[-103.2159,20.4988],[-103.2212,20.496],[-103.2333,20.4967],[-103.2363,20.4931],[-103.2437,20.495],[-103.2469,20.5068],[-103.2546,20.5119],[-103.2669,20.5085],[-103.2645,20.5154],[-103.2708,20.5294],[-103.2856,20.5269],[-103.2845,20.5327],[-103.2949,20.5382],[-103.3129,20.5423],[-103.3199,20.5499],[-103.33,20.5482],[-103.3332,20.573],[-103.3316,20.5783],[-103.3188,20.585]]]}}]};
+
+    const TIPOS = [
+        { k:'Preparatoria de la UDG', nivel:'Media superior', color:'#2E86C1', sup:false },
+        { k:'Preparatoria Privada', nivel:'Media superior', color:'#F08013', sup:false },
+        { k:'Universidad (o Centro universitario de la UDG)', nivel:'Superior', color:'#18345D', sup:true },
+        { k:'Universidad o Centro Universitario Privado', nivel:'Superior', color:'#8E2C48', sup:true }
+    ];
+    const TIPO = Object.fromEntries(TIPOS.map(t => [t.k, t]));
+    const ETIQUETAS = {
+        wkt_geom:'Geometría (WKT)', longitud:'Longitud', latitud:'Latitud', nombre:'Nombre', domicilio:'Domicilio',
+        tipo:'Tipo', municipio:'Municipio', clave_sep:'Clave SEP', acuerdo_rvoe:'Acuerdo RVOE',
+        nivel_confianza:'Nivel de confianza', fuente:'Fuente'
+    };
+    const REGS = BASE.registros;
+    const nf = n => Number(n).toLocaleString('es-MX');
+    const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+    const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+    REGS.forEach(r => { r._txt = norm([r.nombre, r.domicilio, r.clave_sep, r.acuerdo_rvoe, r.municipio, r._mun].join(' ')); });
+
+    /* ---------- Estado y preferencias por visitante ---------- */
+    const estado = { vista:'puntos', limites:true, tipos:new Set(TIPOS.map(t => t.k)), municipio:'', q:'', tema:null };
+    function guardar() {
+        try { localStorage.setItem('cges-amg-escuelas-v1', JSON.stringify({ tema:estado.tema, vista:estado.vista, limites:estado.limites })); } catch (e) {}
+    }
+    try {
+        const g = JSON.parse(localStorage.getItem('cges-amg-escuelas-v1') || '{}');
+        if (g.vista) estado.vista = g.vista;
+        if (typeof g.limites === 'boolean') estado.limites = g.limites;
+        if (g.tema) estado.tema = g.tema;
+    } catch (e) {}
+
+    /* ---------- Tema ---------- */
+    const temaBtn = document.getElementById('temaBtn');
+    const esOscuro = () => {
+        const a = document.documentElement.getAttribute('data-theme');
+        return a ? a === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    };
+    const pintaBotonTema = () => { temaBtn.textContent = esOscuro() ? '☀' : '◐'; };
+    temaBtn.addEventListener('click', () => {
+        estado.tema = esOscuro() ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', estado.tema);
+        pintaBotonTema(); guardar();
+    });
+    pintaBotonTema();
+
+    /* ---------- Panel plegable ---------- */
+    const cab = document.querySelector('#mapaSec .panel-cab');
+    function alternar() {
+        const sec = cab.closest('section');
+        sec.classList.toggle('cerrado');
+        const cerrado = sec.classList.contains('cerrado');
+        cab.setAttribute('aria-expanded', String(!cerrado));
+        if (!cerrado && mapa) setTimeout(() => mapa.invalidateSize(), 60);
+    }
+    cab.addEventListener('click', alternar);
+    cab.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); alternar(); } });
+
+    /* ---------- Controles ---------- */
+    document.getElementById('notaTotal').textContent = `${nf(REGS.length)} instituciones · WGS84 (EPSG:4326)`;
+    document.getElementById('pieTotal').textContent = nf(REGS.length);
+
+    const cajaTipos = document.getElementById('tipos');
+    function pintaTipos() {
+        const conteo = {};
+        REGS.forEach(r => { conteo[r.tipo] = (conteo[r.tipo] || 0) + 1; });
+        let html = '', nivelPrev = '';
+        TIPOS.forEach(t => {
+            if (t.nivel !== nivelPrev) { html += `<span class="tipo-nivel">${t.nivel}</span>`; nivelPrev = t.nivel; }
+            html += `<button type="button" class="tipo-chip" data-tipo="${esc(t.k)}" aria-pressed="${estado.tipos.has(t.k)}">
+                <span class="pt${t.sup ? ' sup' : ''}" style="background:${t.color}"></span>${esc(t.k)}
+                <span class="n">${nf(conteo[t.k] || 0)}</span></button>`;
+        });
+        cajaTipos.innerHTML = html;
+    }
+    cajaTipos.addEventListener('click', e => {
+        const b = e.target.closest('.tipo-chip'); if (!b) return;
+        const k = b.dataset.tipo;
+        estado.tipos.has(k) ? estado.tipos.delete(k) : estado.tipos.add(k);
+        b.setAttribute('aria-pressed', String(estado.tipos.has(k)));
+        render(false);
+    });
+
+    const selMun = document.getElementById('selMunicipio');
+    (function () {
+        const c = {};
+        REGS.forEach(r => { c[r._mun] = (c[r._mun] || 0) + 1; });
+        selMun.innerHTML = `<option value="">Todos los municipios (${nf(REGS.length)})</option>` +
+            Object.entries(c).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'es'))
+                .map(([m, n]) => `<option value="${esc(m)}">${esc(m)} (${nf(n)})</option>`).join('');
+    })();
+    selMun.addEventListener('change', () => { estado.municipio = selMun.value; render(true); });
+
+    const txt = document.getElementById('txtBuscar');
+    let tBus = null;
+    txt.addEventListener('input', () => { clearTimeout(tBus); tBus = setTimeout(() => { estado.q = norm(txt.value); render(!!estado.q); }, 180); });
+
+    document.getElementById('btnLimpiar').addEventListener('click', () => {
+        estado.tipos = new Set(TIPOS.map(t => t.k)); estado.municipio = ''; estado.q = '';
+        selMun.value = ''; txt.value = ''; pintaTipos(); render(true);
+    });
+
+    const vistaBtns = document.getElementById('vistaBtns');
+    vistaBtns.addEventListener('click', e => {
+        const b = e.target.closest('button[data-vista]'); if (!b) return;
+        estado.vista = b.dataset.vista;
+        vistaBtns.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+        guardar(); render(false);
+    });
+    vistaBtns.querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.vista === estado.vista));
+
+    const chkLim = document.getElementById('chkLimites');
+    chkLim.checked = estado.limites;
+    chkLim.addEventListener('change', () => { estado.limites = chkLim.checked; guardar(); render(false); });
+
+    function filtra() {
+        return REGS.filter(r => estado.tipos.has(r.tipo)
+            && (!estado.municipio || r._mun === estado.municipio)
+            && (!estado.q || r._txt.includes(estado.q)));
+    }
+
+    /* ---------- Ficha (popup) con todos los campos del Excel ---------- */
+    /* Ficha compacta: solo nombre, geometría y domicilio (instrucción del 14-oct-2026). */
+    const val = v => (v === null || v === undefined || String(v).trim() === '') ? null : String(v);
+    function ficha(r) {
+        const geom = val(r.wkt_geom), dom = val(r.domicilio);
+        return `<div class="pop-nombre">${esc(r.nombre)}</div>
+            <div class="pop-campo"><span>Geometría</span>${geom ? `<code>${esc(geom)}</code>` : '<em>Sin dato</em>'}</div>
+            <div class="pop-campo"><span>Domicilio</span>${dom ? esc(dom) : '<em>Sin dato</em>'}</div>`;
+    }
+    const esMovil = () => window.matchMedia('(max-width: 600px)').matches;
+    const optsPopup = () => esMovil()
+        ? { maxWidth:230, minWidth:180, autoPanPaddingTopLeft:[10, 60], autoPanPaddingBottomRight:[10, 10], className:'pop-chico' }
+        : { maxWidth:300, minWidth:220, autoPanPadding:[20, 20] };
+
+    /* ---------- Mapa ---------- */
+    let mapa = null, capaDatos = null, capaGeo = null, leyenda = null, sinMosaico = false, cargadas = 0, fallas = 0;
+    const avisoMosaico = document.getElementById('avisoMosaico');
+    const info = document.getElementById('infoMapa');
+    const colorRel = (v, max) => {
+        if (!v) return '#E0E0E0';
+        const c = ['#C6DBEF','#9ECAE1','#6BAED6','#4292C6','#2171B5','#084594'];
+        return c[Math.min(c.length - 1, Math.floor(v / (max || 1) * c.length))];
+    };
+    const tinta = hex => (hex === '#2171B5' || hex === '#084594') ? 'b' : 'n';
+
+    /* El encuadre inicial se calcula SOLO cuando el contenedor ya tiene tamaño.
+       Dentro de un iframe oculto al cargar (visor de artifacts, vistas previas)
+       el div mide 0 px: fitBounds devolvía el zoom máximo y los puntos quedaban
+       fuera de la vista. Un ResizeObserver reencuadra hasta que el usuario
+       mueva el mapa por su cuenta. */
+    let encuadreUsuario = false, encuadrado = false;
+    const contMapa = document.getElementById('mapa');
+    const boundsTodos = () => L.latLngBounds(REGS.map(r => [r.latitud, r.longitud]));
+    function encuadraInicial() {
+        if (!mapa || encuadreUsuario) return;
+        if (contMapa.clientWidth < 50 || contMapa.clientHeight < 50) return;
+        mapa.invalidateSize(false);
+        mapa.fitBounds(boundsTodos(), { padding:[24, 24], maxZoom:13, animate:false });
+        encuadrado = true;
+    }
+    function iniciaMapa() {
+        if (typeof L === 'undefined') { info.textContent = 'No se pudieron cargar las librerías del mapa.'; return false; }
+        mapa = L.map('mapa', { zoomSnap:0.5, minZoom:8, maxZoom:18, center:[20.64, -103.36], zoom:10 });
+        /* Mosaico OSM, el mismo de Reportes. Requiere servirse desde un sitio web
+           (GitHub Pages): abierto con file:// o dentro del visor de artifacts no carga. */
+        const capaBase = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution:'© OpenStreetMap', maxZoom:19
+        });
+        capaBase.on('tileload', () => { cargadas++; });
+        capaBase.on('tileerror', () => {
+            fallas++;
+            if (!sinMosaico && cargadas === 0 && fallas >= 4) { sinMosaico = true; avisoMosaico.hidden = false; render(false); }
+        });
+        capaBase.addTo(mapa);
+        /* Cualquier interacción directa con el mapa (arrastre, rueda, botones de zoom, popups) congela el encuadre. */
+        ['pointerdown', 'wheel', 'touchstart'].forEach(ev =>
+            contMapa.addEventListener(ev, () => { if (encuadrado) encuadreUsuario = true; }, { passive:true }));
+        if (window.ResizeObserver) {
+            new ResizeObserver(() => { mapa.invalidateSize(false); if (!encuadreUsuario) encuadraInicial(); }).observe(contMapa);
+        }
+        window.addEventListener('load', encuadraInicial);
+        encuadraInicial();
+        return true;
+    }
+
+    function render(encuadra) {
+        const regs = filtra();
+        const n = regs.length;
+        info.innerHTML = `<b>${nf(n)}</b> de ${nf(REGS.length)} instituciones visibles`;
+        if (!mapa) return;
+        if (capaDatos) { mapa.removeLayer(capaDatos); capaDatos = null; }
+        if (capaGeo) { mapa.removeLayer(capaGeo); capaGeo = null; }
+        if (leyenda) { mapa.removeControl(leyenda); leyenda = null; }
+        const vista = estado.vista;
+
+        /* Límites municipales y coropleta: conteo sobre el filtro completo, por municipio asignado. */
+        if (estado.limites || vista === 'coropleta' || sinMosaico) {
+            const porMun = {};
+            regs.forEach(r => { porMun[r._mun] = (porMun[r._mun] || 0) + 1; });
+            const max = Math.max(1, ...Object.values(porMun));
+            capaGeo = L.geoJSON(GEO, {
+                style: ft => {
+                    const v = porMun[ft.properties.nom] || 0;
+                    if (vista === 'coropleta') return { color:'#18345D', weight:1.2, opacity:1, fillColor:colorRel(v, max), fillOpacity:.78 };
+                    return sinMosaico
+                        ? { color:'#18345D', weight:1, opacity:.55, fillColor:'#F8FAFC', fillOpacity:.9 }
+                        : { color:'#18345D', weight:1, opacity:.45, fill:false };
+                },
+                onEachFeature: (ft, capa) => {
+                    const nom = ft.properties.nom, v = porMun[nom] || 0;
+                    if (vista === 'coropleta') {
+                        const des = TIPOS.map(t => [t, regs.filter(r => r._mun === nom && r.tipo === t.k).length]).filter(x => x[1]);
+                        capa.bindPopup(`<div class="pop-nombre" style="margin-bottom:6px">${esc(nom)}</div>
+                            <table class="pop-tabla"><tr><th>Total</th><td><b>${nf(v)}</b> ${v === 1 ? 'institución' : 'instituciones'}</td></tr>
+                            ${des.map(([t, c]) => `<tr><th><span class="pop-tipo" style="margin:0"><i style="background:${t.color}"></i></span></th><td>${esc(t.k)}: <b>${nf(c)}</b></td></tr>`).join('')}</table>`);
+                        if (v) capa.bindTooltip(nf(v), { permanent:true, direction:'center', opacity:1, className:'coro-etq coro-etq-' + tinta(colorRel(v, max)) });
+                    } else {
+                        capa.bindTooltip(nom, { sticky:true });
+                    }
+                }
+            }).addTo(mapa);
+            if (vista === 'coropleta') {
+                leyenda = L.control({ position:'bottomright' });
+                leyenda.onAdd = () => {
+                    const d = L.DomUtil.create('div', 'coro-leyenda');
+                    const c = ['#C6DBEF','#9ECAE1','#6BAED6','#4292C6','#2171B5','#084594'];
+                    d.innerHTML = `<b>Instituciones por municipio</b><div class="esc">${c.map(x => `<i style="background:${x}"></i>`).join('')}</div>
+                        <div class="lim"><span>1</span><span>${nf(max)}</span></div>`;
+                    return d;
+                };
+                leyenda.addTo(mapa);
+            }
+        }
+
+        if (vista !== 'coropleta' && n) {
+            if (vista === 'calor' && L.heatLayer) {
+                capaDatos = L.heatLayer(regs.map(r => [r.latitud, r.longitud, 0.7]), { radius:24, blur:18, minOpacity:0.3, maxZoom:14 });
+            } else if (vista === 'clusters' && L.markerClusterGroup) {
+                capaDatos = L.markerClusterGroup({ showCoverageOnHover:false, maxClusterRadius:50 });
+                regs.forEach(r => {
+                    const t = TIPO[r.tipo] || { color:'#64748B', sup:false };
+                    const s = t.sup ? 16 : 13;
+                    capaDatos.addLayer(L.marker([r.latitud, r.longitud], {
+                        icon:L.divIcon({ className:'pin', html:`<span style="width:${s}px;height:${s}px;background:${t.color}"></span>`, iconSize:[s, s] }),
+                        title:r.nombre
+                    }).bindPopup(ficha(r), optsPopup()));
+                });
+            } else {
+                capaDatos = L.featureGroup();
+                /* Las universidades se dibujan al final para quedar encima de las preparatorias. */
+                regs.slice().sort((a, b) => (TIPO[a.tipo]?.sup ? 1 : 0) - (TIPO[b.tipo]?.sup ? 1 : 0)).forEach(r => {
+                    const t = TIPO[r.tipo] || { color:'#64748B', sup:false };
+                    L.circleMarker([r.latitud, r.longitud], {
+                        radius:t.sup ? 8 : 6, color:'#FFFFFF', weight:1.6, fillColor:t.color, fillOpacity:.92
+                    }).bindTooltip(esc(r.nombre), { direction:'top', offset:[0, -6] })
+                      .bindPopup(ficha(r), optsPopup())
+                      .addTo(capaDatos);
+                });
+            }
+            capaDatos.addTo(mapa);
+        }
+
+        if (encuadra && n) {
+            const b = L.latLngBounds(regs.map(r => [r.latitud, r.longitud]));
+            if (n === 1) mapa.setView(b.getCenter(), 16); else mapa.fitBounds(b, { padding:[30, 30], maxZoom:15 });
+        }
+        setTimeout(() => mapa.invalidateSize(), 60);
+    }
+
+    pintaTipos();
+    if (iniciaMapa()) render(false); else render(false);
+})();
+</script>
+
+</body>
+</html>
