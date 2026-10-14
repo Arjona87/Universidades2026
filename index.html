@@ -900,6 +900,19 @@ svg.leaflet-image-layer.leaflet-interactive path {
     .pop-campo + .pop-campo { margin-top:6px; padding-top:6px; border-top:1px solid #E9EFF6; }
     .pop-campo span { display:block; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#64748B; }
     .pop-campo code { font-size:11px; color:#33465F; }
+    .leaflet-heatmap-layer { pointer-events:none; }
+    .capas { margin-top:14px; border:1px solid var(--line); border-radius:var(--r-md); overflow:hidden; }
+    .capas-banner { width:100%; display:flex; align-items:center; gap:10px; padding:11px 14px; border:0; cursor:pointer;
+        background:var(--surface-3); color:var(--ink); font-family:var(--f-body); font-size:13px; text-align:left; }
+    .capas-banner:hover { background:var(--chip); }
+    .capas-t { font-family:var(--f-display); font-weight:700; color:var(--accent); }
+    .capas-s { color:var(--muted); font-weight:600; flex:1 1 auto; }
+    .capas-f { transition:transform .2s ease; color:var(--muted); }
+    .capas-banner[aria-expanded="true"] .capas-f { transform:rotate(90deg); }
+    .capas-cuerpo { padding:14px; border-top:1px solid var(--line); }
+    .inc-et { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--muted); font-weight:600; }
+    .inc-cluster div { width:36px; height:36px; border-radius:50%; background:rgba(192,57,43,.85); color:#fff; display:flex; align-items:center; justify-content:center; font:700 11px Inter, Arial, sans-serif; box-shadow:0 0 0 5px rgba(192,57,43,.25); }
+    #incActualizar:disabled { opacity:.5; cursor:progress; }
     .pop-pt { width:9px; height:9px; border-radius:50%; display:inline-block; margin-right:6px; vertical-align:middle; }
     #btnActualizar:disabled { opacity:.5; cursor:progress; }
     .pop-campo em { color:#94A3B8; font-style:normal; }
@@ -1006,6 +1019,33 @@ svg.leaflet-image-layer.leaflet-interactive path {
             </div>
 
             <div id="mapa" role="region" aria-label="Mapa de escuelas del AMG"></div>
+            
+            <div class="capas">
+                <button type="button" class="capas-banner" id="capasBtn" aria-expanded="false" aria-controls="capasCuerpo">
+                    <span class="capas-t">Más capas</span><span class="capas-s">Incidencia delictiva · Fiscalía</span><span class="capas-f">▸</span>
+                </button>
+                <div id="capasCuerpo" class="capas-cuerpo" hidden>
+                    <div class="chart-barra">
+                        <label class="inc-et">Delito <select id="incDelito" data-k="delito"><option value="__TODOS__">Todos</option></select></label>
+                        <label class="inc-et">Año <select id="incAnio" data-k="anio"><option value="__TODOS__">Todos</option></select></label>
+                        <label class="inc-et">Mes <select id="incMes" data-k="mes"><option value="__TODOS__">Todos</option></select></label>
+                        <label class="inc-et">Municipio <select id="incMun" data-k="municipio"><option value="__TODOS__">Todos</option></select></label>
+                        <div class="conmutador" id="incViol" role="group" aria-label="Violencia">
+                            <button type="button" data-v="__TODOS__" class="on">Todos</button><button type="button" data-v="SI">Con violencia</button><button type="button" data-v="NO">Sin violencia</button>
+                        </div>
+                        <button type="button" class="btn-texto" id="incLimpiar">Limpiar filtros</button>
+                    </div>
+                    <div class="chart-barra">
+                        <div class="conmutador" id="incVista" role="group" aria-label="Vista de incidencia">
+                            <button type="button" data-vista="calor" class="on">Mapa de calor</button><button type="button" data-vista="clusters">Clusters</button><button type="button" data-vista="puntos">Puntos</button><button type="button" data-vista="coropleta">Coropleta municipal</button>
+                        </div>
+                        <label class="mun-et"><input type="checkbox" id="incMostrar" checked> Mostrar incidencia</label>
+                        <span class="sep-flex"></span>
+                        <span id="incInfo" class="info-estado" aria-live="polite"></span>
+                        <button type="button" class="btn-texto" id="incActualizar">Actualizar incidencia</button>
+                    </div>
+                </div>
+            </div>
             <p class="mapa-aviso" id="avisoMosaico" hidden>El mapa de calles de OpenStreetMap no cargó en esta vista: solo aparece cuando la página se abre desde su sitio web (GitHub Pages). Mientras tanto se muestran los límites municipales del Marco Geoestadístico INEGI como referencia.</p>
         </div>
     </section>
@@ -1019,6 +1059,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/proj4@2.9.2/dist/proj4.js"></script>
 <script>
 (function () {
     'use strict';
@@ -1205,6 +1246,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         estado.vista = b.dataset.vista;
         vistaBtns.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
         guardar(); render(false);
+        if (estado.vista === 'coropleta' && window.APP && APP.alCoropletaEscuelas) APP.alCoropletaEscuelas();
     });
     vistaBtns.querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.vista === estado.vista));
 
@@ -1322,7 +1364,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
         if (vista !== 'coropleta' && n) {
             if (vista === 'calor' && L.heatLayer) {
-                capaDatos = L.heatLayer(regs.map(r => [r.latitud, r.longitud, 0.7]), { radius:24, blur:18, minOpacity:0.3, maxZoom:14 });
+                capaDatos = L.heatLayer(regs.map(r => [r.latitud, r.longitud, 0.7]), { radius:24, blur:18, minOpacity:0.3, maxZoom:14, gradient:{ 0.4:'#FDE3C4', 0.7:'#F5A65B', 1:'#C25E00' } });
             } else if (vista === 'clusters' && L.markerClusterGroup) {
                 capaDatos = L.markerClusterGroup({ showCoverageOnHover:false, maxClusterRadius:50 });
                 regs.forEach(r => {
@@ -1395,9 +1437,216 @@ svg.leaflet-image-layer.leaflet-interactive path {
     document.addEventListener('visibilitychange', () => { if (!document.hidden) cargaDatos(false); });
 
     iniciaMapa();
+    /* Puente para la capa de incidencia (módulo independiente). */
+    window.APP = {
+        mapa, GEO, norm, esc, nf, munPoligono, optsPopup,
+        vistaEscuelas: () => estado.vista,
+        setVistaEscuelas: v => { const b = vistaBtns.querySelector(`button[data-vista="${v}"]`); if (b) { estado.vista = v; vistaBtns.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); guardar(); render(false); } }
+    };
     info.textContent = 'Cargando instituciones desde Google Sheets…';
     cargaDatos(false);
     setInterval(() => { if (!document.hidden) cargaDatos(false); }, INTERVALO_MS);
+})();
+</script>
+<script>
+(function () {
+    'use strict';
+    /* Capa de incidencia delictiva — pestaña «Fiscalía» (gid 1080129787) del libro de Reportes.
+       Se descarga solo al abrir «Más capas». wkt_geom viene en UTM 13N (EPSG:32613). */
+    const A = window.APP;
+    if (!A || !A.mapa) return;
+    const { mapa, GEO, norm, esc, nf, munPoligono, optsPopup } = A;
+    const SHEET_ID = '15ryC1n0drurOdKMel8tBXwNqJUef1U9e5XLCNOd6oS4', GID = '1080129787';
+    const COLS = 'A,U,AP,M,W,X,Z,Q,R,AL,DA,AN,CW,CU,BW,BX,AD,AB,AV,AX,CC,N,DI,BB,BC,BD,CL,F';
+    const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    const T = '__TODOS__';
+    const est = { delito:T, anio:T, mes:T, municipio:T, violencia:T, vista:'calor', visible:true };
+    let datos = null, capa = null, capaGeo = null, leyenda = null, cargando = false;
+
+    mapa.createPane('incidencia'); mapa.getPane('incidencia').style.zIndex = 350;
+
+    const $ = id => document.getElementById(id);
+    const btn = $('capasBtn'), cuerpo = $('capasCuerpo'), info = $('incInfo');
+
+    btn.addEventListener('click', () => {
+        const abrir = cuerpo.hidden;
+        cuerpo.hidden = !abrir;
+        btn.setAttribute('aria-expanded', String(abrir));
+        if (abrir && !datos) carga();
+    });
+
+    function parseCSV(txt) {
+        const filas = []; let fila = [], c = '', q = false;
+        for (let i = 0; i < txt.length; i++) {
+            const ch = txt[i];
+            if (q) { if (ch === '"') { if (txt[i + 1] === '"') { c += '"'; i++; } else q = false; } else c += ch; }
+            else if (ch === '"') q = true;
+            else if (ch === ',') { fila.push(c); c = ''; }
+            else if (ch === '\n' || ch === '\r') { if (ch === '\r' && txt[i + 1] === '\n') i++; fila.push(c); filas.push(fila); fila = []; c = ''; }
+            else c += ch;
+        }
+        if (c !== '' || fila.length) { fila.push(c); filas.push(fila); }
+        return filas;
+    }
+    const valida = t => !/^\s*</.test(t) && t.indexOf('wkt_geom') !== -1;
+    async function descarga() {
+        const u1 = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}&tq=${encodeURIComponent('select ' + COLS)}&_=${Date.now()}`;
+        try { const r = await fetch(u1, { cache:'no-store' }); const t = await r.text(); if (r.ok && valida(t)) return t; } catch (e) {}
+        const r = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`, { cache:'no-store' });
+        const t = await r.text();
+        if (!r.ok || !valida(t)) throw new Error('la pestaña de Fiscalía no respondió o no es pública');
+        return t;
+    }
+
+    function procesa(txt) {
+        if (typeof proj4 === 'undefined') throw new Error('no cargó la librería de reproyección');
+        proj4.defs('EPSG:32613', '+proj=utm +zone=13 +datum=WGS84 +units=m +no_defs');
+        const filas = parseCSV(txt);
+        const cab = filas[0].map(h => String(h || '').trim());
+        const ix = n => cab.indexOf(n);
+        const C = { g:ix('wkt_geom'), d:ix('Delito'), f:ix('FECHA_DE_H'), mo:ix('Modalidad'), v:ix('Violencia'),
+                    me:ix('MES'), a:ix('AÑO'), mu:ix('MUNICIPIO'), co:ix('COLONIA') };
+        const val = (r, i) => (i >= 0 && r[i] != null) ? String(r[i]).trim() : '';
+        const regs = []; let total = 0;
+        for (let k = 1; k < filas.length; k++) {
+            const r = filas[k];
+            if (!r.some(x => String(x).trim())) continue;
+            const m = /Point\s*\(\s*([-\d.]+)\s+([-\d.]+)/i.exec(val(r, C.g));
+            if (!m) continue;
+            let x = +m[1], y = +m[2], lon, lat;
+            if (Math.abs(x) <= 180) { lon = x; lat = y; }
+            else { try { [lon, lat] = proj4('EPSG:32613', 'EPSG:4326', [x, y]); } catch (e) { continue; } }
+            if (!(lat > 20.2 && lat < 21.1 && lon > -103.8 && lon < -102.9)) continue;
+            const mun = munPoligono(lon, lat);
+            if (!mun) continue;            /* Solo AMG: el punto debe caer en un municipio metropolitano. */
+            total++;
+            const a = val(r, C.a), anio = a && !isNaN(+a) ? String(Math.round(+a)) : a;
+            regs.push({ lat, lon, mun, delito:val(r, C.d) || 'Sin dato', anio, mes:val(r, C.me),
+                violencia:/^s[ií]/i.test(val(r, C.v)) ? 'SI' : 'NO',
+                fecha:val(r, C.f), modalidad:val(r, C.mo), municipio:val(r, C.mu), colonia:val(r, C.co) });
+        }
+        return regs;
+    }
+
+    const ordMes = m => { const i = MESES.indexOf(norm(m)); return i >= 0 ? i : (isNaN(+m) ? 99 : +m - 1); };
+    function llenaSelect(id, valores, ord, etiqueta) {
+        const s = $(id), unicos = [...new Set(valores.filter(Boolean))].sort(ord);
+        s.innerHTML = `<option value="${T}">Todos</option>` + unicos.map(v => `<option value="${esc(v)}">${esc(etiqueta ? etiqueta(v) : v)}</option>`).join('');
+        s.value = unicos.includes(est[s.dataset.k]) ? est[s.dataset.k] : T;
+        est[s.dataset.k] = s.value;
+    }
+    function pintaFiltros() {
+        llenaSelect('incDelito', datos.map(r => r.delito), (a, b) => a.localeCompare(b, 'es'));
+        llenaSelect('incAnio', datos.map(r => r.anio), (a, b) => b.localeCompare(a));
+        llenaSelect('incMes', datos.map(r => r.mes), (a, b) => ordMes(a) - ordMes(b));
+        llenaSelect('incMun', datos.map(r => r.mun), (a, b) => a.localeCompare(b, 'es'));
+    }
+    ['incDelito','incAnio','incMes','incMun'].forEach(id => $(id).addEventListener('change', e => { est[e.target.dataset.k] = e.target.value; render(); }));
+
+    function conmuta(id, attr, fn) {
+        const g = $(id);
+        g.addEventListener('click', e => {
+            const b = e.target.closest(`button[data-${attr}]`); if (!b) return;
+            g.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+            fn(b.dataset[attr]);
+        });
+    }
+    conmuta('incViol', 'v', v => { est.violencia = v; render(); });
+    conmuta('incVista', 'vista', v => {
+        est.vista = v;
+        if (v === 'coropleta' && A.vistaEscuelas() === 'coropleta') A.setVistaEscuelas('puntos');
+        render();
+    });
+    const marcaVista = v => $('incVista').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.vista === v));
+    A.alCoropletaEscuelas = () => { if (est.vista === 'coropleta') { est.vista = 'puntos'; marcaVista('puntos'); render(); } };
+    $('incMostrar').addEventListener('change', e => { est.visible = e.target.checked; render(); });
+    $('incLimpiar').addEventListener('click', () => {
+        Object.assign(est, { delito:T, anio:T, mes:T, municipio:T, violencia:T });
+        ['incDelito','incAnio','incMes','incMun'].forEach(id => { $(id).value = T; });
+        $('incViol').querySelectorAll('button').forEach(x => x.classList.toggle('on', x.dataset.v === T));
+        render();
+    });
+    $('incActualizar').addEventListener('click', carga);
+
+    const filtra = () => datos.filter(r =>
+        (est.delito === T || r.delito === est.delito) && (est.anio === T || r.anio === est.anio) &&
+        (est.mes === T || r.mes === est.mes) && (est.municipio === T || r.mun === est.municipio) &&
+        (est.violencia === T || r.violencia === est.violencia));
+
+    const popup = r => {
+        const f = [['Fecha', r.fecha || [r.mes, r.anio].filter(Boolean).join(' ')], ['Municipio', r.municipio || r.mun],
+                   ['Colonia', r.colonia], ['Modalidad', r.modalidad], ['Violencia', r.violencia === 'SI' ? 'Sí' : 'No']]
+            .filter(([, v]) => v);
+        return `<div class="pop-nombre">${esc(r.delito)}</div>` + f.map(([k, v]) => `<div class="pop-campo"><span>${k}</span>${esc(v)}</div>`).join('');
+    };
+    const ESC = ['#FEE5D9','#FCBBA1','#FC9272','#FB6A4A','#DE2D26','#A50F15'];
+    const colorInc = (v, max) => v ? ESC[Math.min(5, Math.floor(v / (max || 1) * 6))] : '#F0F0F0';
+
+    function limpia() {
+        /* leaflet.heat retira su lienzo del overlayPane: se devuelve ahí antes de quitar la capa. */
+        if (capa && capa._canvas && capa._canvas.parentNode !== mapa.getPanes().overlayPane) mapa.getPanes().overlayPane.appendChild(capa._canvas);
+        [capa, capaGeo].forEach(c => { if (c) mapa.removeLayer(c); });
+        if (leyenda) mapa.removeControl(leyenda);
+        capa = capaGeo = leyenda = null;
+    }
+    function render() {
+        limpia();
+        if (!datos) return;
+        const regs = filtra();
+        info.innerHTML = `<b>${nf(regs.length)}</b> de ${nf(datos.length)} registros en el AMG`;
+        if (!est.visible) return;
+        if (est.vista === 'coropleta') {
+            const por = {}; regs.forEach(r => { por[r.mun] = (por[r.mun] || 0) + 1; });
+            const max = Math.max(1, ...Object.values(por));
+            capaGeo = L.geoJSON(GEO, {
+                pane:'incidencia',
+                style: ft => ({ color:'#7A1E12', weight:1.1, opacity:.9, fillColor:colorInc(por[ft.properties.nom] || 0, max), fillOpacity:.72 }),
+                onEachFeature: (ft, l) => {
+                    const v = por[ft.properties.nom] || 0;
+                    l.bindPopup(`<div class="pop-nombre">${esc(ft.properties.nom)}</div><div class="pop-campo"><span>Delitos en el filtro</span><b>${nf(v)}</b></div>`, optsPopup());
+                    if (v) l.bindTooltip(nf(v), { permanent:true, direction:'center', opacity:1,
+                        className:'coro-etq ' + (ESC.indexOf(colorInc(v, max)) >= 4 ? 'coro-etq-b' : 'coro-etq-n') });
+                }
+            }).addTo(mapa);
+            leyenda = L.control({ position:'bottomleft' });
+            leyenda.onAdd = () => { const d = L.DomUtil.create('div', 'coro-leyenda');
+                d.innerHTML = `<b>Delitos por municipio</b><div class="esc">${ESC.map(c => `<i style="background:${c}"></i>`).join('')}</div><div class="lim"><span>1</span><span>${nf(max)}</span></div>`; return d; };
+            leyenda.addTo(mapa);
+            return;
+        }
+        if (!regs.length) return;
+        if (est.vista === 'calor' && L.heatLayer) {
+            capa = L.heatLayer(regs.map(r => [r.lat, r.lon, 0.35]), { radius:14, blur:10, minOpacity:0.2 }).addTo(mapa);
+            /* El lienzo de calor va al panel de incidencia (debajo de las escuelas) y no captura clics. */
+            if (capa._canvas) { mapa.getPane('incidencia').appendChild(capa._canvas); capa._canvas.style.pointerEvents = 'none'; }
+            return;
+        }
+        if (est.vista === 'clusters' && L.markerClusterGroup) {
+            capa = L.markerClusterGroup({ clusterPane:'incidencia', showCoverageOnHover:false, chunkedLoading:true,
+                iconCreateFunction: c => L.divIcon({ className:'inc-cluster', html:`<div>${nf(c.getChildCount())}</div>`, iconSize:[36, 36] }) });
+            capa.addLayers(regs.map(r => L.circleMarker([r.lat, r.lon], { pane:'incidencia', radius:4, weight:0,
+                fillColor:r.violencia === 'SI' ? '#C0392B' : '#5B2C6F', fillOpacity:.8 }).bindPopup(popup(r), optsPopup())));
+            capa.addTo(mapa);
+            return;
+        }
+        capa = L.layerGroup();
+        regs.slice(0, 4000).forEach(r => capa.addLayer(L.circleMarker([r.lat, r.lon], { pane:'incidencia', radius:3, weight:0,
+            fillColor:r.violencia === 'SI' ? '#C0392B' : '#5B2C6F', fillOpacity:.6 }).bindPopup(popup(r), optsPopup())));
+        capa.addTo(mapa);
+        if (regs.length > 4000) info.innerHTML += ' · vista Puntos limitada a 4,000';
+    }
+
+    async function carga() {
+        if (cargando) return; cargando = true;
+        $('incActualizar').disabled = true;
+        info.textContent = 'Descargando incidencia de Fiscalía… puede tardar unos segundos.';
+        try {
+            datos = procesa(await descarga());
+            pintaFiltros(); render();
+        } catch (e) {
+            info.innerHTML = `<span style="color:var(--risk)">No se pudo cargar la incidencia: ${esc(e.message || 'error de red')}.</span>`;
+        } finally { cargando = false; $('incActualizar').disabled = false; }
+    }
 })();
 </script>
 
