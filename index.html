@@ -915,6 +915,24 @@ svg.leaflet-image-layer.leaflet-interactive path {
     #incActualizar:disabled { opacity:.5; cursor:progress; }
     .pop-pt { width:9px; height:9px; border-radius:50%; display:inline-block; margin-right:6px; vertical-align:middle; }
     #btnActualizar:disabled { opacity:.5; cursor:progress; }
+    .leaflet-control-layers { font:600 12px Inter, Arial, sans-serif; border-radius:6px; }
+    .listado { margin-top:18px; }
+    .lst-cab { display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; margin-bottom:10px; }
+    .lst-bloque { margin-bottom:16px; }
+    .lst-tit { display:flex; flex-wrap:wrap; align-items:center; gap:4px 12px; margin-bottom:6px; }
+    .lst-tit h3 { margin:0; font-family:var(--f-display); font-size:14px; color:var(--ink); }
+    .lst-n { font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; }
+    .lst-scroll { max-height:460px; overflow:auto; border:1px solid var(--line); border-radius:var(--r-sm); }
+    .lst-tabla { width:100%; min-width:760px; border-collapse:collapse; font-size:12.5px; }
+    .lst-tabla thead th { position:sticky; top:0; z-index:1; background:#4E9A3E; color:#fff; text-align:left; font-weight:700; padding:7px 9px; }
+    .lst-tabla td { padding:5px 9px; border-bottom:1px solid var(--line-soft); color:var(--ink); vertical-align:top; }
+    .lst-tabla td.lst-tipo { color:#0F1E33; white-space:nowrap; }
+    .lst-tabla tr.lst-mun td { background:var(--surface-3); font-weight:700; color:var(--ink-soft); padding-top:9px; }
+    .lst-tabla tr.lst-mun span { font-weight:600; color:var(--muted); margin-left:6px; }
+    .lst-ck { width:34px; text-align:center; }
+    .lst-ck input { accent-color:var(--accent); width:16px; height:16px; cursor:pointer; }
+    .lst-nom { background:none; border:0; padding:0; font:inherit; color:var(--ink); text-align:left; cursor:pointer; }
+    .lst-nom:hover { color:var(--accent); text-decoration:underline; }
     .pop-campo em { color:#94A3B8; font-style:normal; }
     .pop-chico .leaflet-popup-content { margin:9px 11px; }
     .pop-chico .pop-nombre { font-size:12.5px; margin-bottom:6px; }
@@ -1046,6 +1064,15 @@ svg.leaflet-image-layer.leaflet-interactive path {
                     </div>
                 </div>
             </div>
+            <div class="listado" id="listado">
+                <div class="lst-cab">
+                    <span class="mun-kicker" style="margin:0">Listado de instituciones</span>
+                    <span id="lstInfo" class="info-estado"></span><span class="sep-flex"></span>
+                    <button type="button" class="btn-texto" id="lstTodos">Seleccionar todos</button>
+                    <button type="button" class="btn-texto" id="lstNinguno">Deseleccionar todos</button>
+                </div>
+                <div id="lstTablas"></div>
+            </div>
             <p class="mapa-aviso" id="avisoMosaico" hidden>El mapa de calles de OpenStreetMap no cargó en esta vista: solo aparece cuando la página se abre desde su sitio web (GitHub Pages). Mientras tanto se muestran los límites municipales del Marco Geoestadístico INEGI como referencia.</p>
         </div>
     </section>
@@ -1072,10 +1099,19 @@ svg.leaflet-image-layer.leaflet-interactive path {
     const GEO = {"type":"FeatureCollection","features":[{"type":"Feature","properties":{"cve":"051","nom":"Juanacatlán"},"geometry":{"type":"Polygon","coordinates":[[[-103.1303,20.5684],[-103.1352,20.5563],[-103.1311,20.5517],[-103.1322,20.5468],[-103.1179,20.5441],[-103.0965,20.5302],[-103.109,20.518],[-103.099,20.5135],[-103.093,20.5186],[-103.089,20.5182],[-103.0945,20.4833],[-103.081,20.4877],[-103.0913,20.4161],[-103.0843,20.4004],[-103.1216,20.4055],[-103.1432,20.4229],[-103.1447,20.4437],[-103.1632,20.4551],[-103.1721,20.4531],[-103.1996,20.4589],[-103.2106,20.4802],[-103.1906,20.5029],[-103.1761,20.5029],[-103.1734,20.5125],[-103.1761,20.5134],[-103.1695,20.523],[-103.1704,20.5326],[-103.1657,20.5391],[-103.1648,20.5488],[-103.162,20.5487],[-103.1619,20.5529],[-103.1481,20.5577],[-103.1481,20.5698],[-103.137,20.5718],[-103.1303,20.5684]]]}},{"type":"Feature","properties":{"cve":"044","nom":"Ixtlahuacán de los Membrillos"},"geometry":{"type":"Polygon","coordinates":[[[-103.21,20.4787],[-103.1996,20.4589],[-103.1721,20.4531],[-103.1632,20.4551],[-103.1441,20.4431],[-103.1432,20.4229],[-103.1215,20.4062],[-103.1235,20.3942],[-103.1343,20.3954],[-103.1366,20.3883],[-103.1273,20.3869],[-103.1256,20.3612],[-103.1463,20.3358],[-103.1571,20.3439],[-103.1581,20.3365],[-103.1689,20.3358],[-103.174,20.3323],[-103.1777,20.3367],[-103.1842,20.3349],[-103.1847,20.3273],[-103.1954,20.3258],[-103.2305,20.338],[-103.2438,20.3392],[-103.2489,20.3368],[-103.2717,20.3416],[-103.2823,20.3383],[-103.2863,20.3327],[-103.2898,20.3486],[-103.295,20.3559],[-103.2891,20.3621],[-103.29,20.3693],[-103.2943,20.3694],[-103.2943,20.3756],[-103.2969,20.3761],[-103.2972,20.3966],[-103.2908,20.3977],[-103.2831,20.4087],[-103.2622,20.42],[-103.2622,20.4258],[-103.258,20.4299],[-103.2619,20.4349],[-103.2611,20.4419],[-103.2562,20.4363],[-103.2551,20.429],[-103.2407,20.4318],[-103.249,20.4515],[-103.2186,20.4568],[-103.2263,20.4676],[-103.2202,20.4684],[-103.218,20.4754],[-103.21,20.4787]]]}},{"type":"Feature","properties":{"cve":"039","nom":"Guadalajara"},"geometry":{"type":"Polygon","coordinates":[[[-103.3123,20.7526],[-103.2869,20.7381],[-103.2803,20.7261],[-103.2806,20.72],[-103.2743,20.7109],[-103.2658,20.7056],[-103.2706,20.6902],[-103.2638,20.6685],[-103.2677,20.6641],[-103.2697,20.6451],[-103.2875,20.6409],[-103.3207,20.6463],[-103.3179,20.6425],[-103.3198,20.6328],[-103.3247,20.6263],[-103.3291,20.628],[-103.3328,20.6222],[-103.3301,20.6189],[-103.3359,20.613],[-103.3398,20.6147],[-103.3403,20.6093],[-103.3465,20.6084],[-103.3523,20.6153],[-103.3658,20.6154],[-103.3688,20.6106],[-103.3841,20.6113],[-103.3874,20.6037],[-103.3894,20.613],[-103.3962,20.6131],[-103.3899,20.6208],[-103.3991,20.6262],[-103.3951,20.6422],[-103.3999,20.6429],[-103.3993,20.6505],[-103.3936,20.6548],[-103.3989,20.6571],[-103.3973,20.6594],[-103.4026,20.6657],[-103.4,20.6744],[-103.4027,20.6749],[-103.4037,20.6816],[-103.4008,20.6817],[-103.3982,20.6907],[-103.4051,20.6926],[-103.3995,20.6991],[-103.4066,20.7114],[-103.3902,20.7098],[-103.3442,20.7159],[-103.3411,20.7231],[-103.33,20.7295],[-103.3256,20.7375],[-103.3263,20.7449],[-103.3123,20.7526]]]}},{"type":"Feature","properties":{"cve":"097","nom":"Tlajomulco de Zúñiga"},"geometry":{"type":"Polygon","coordinates":[[[-103.4727,20.5977],[-103.4483,20.5967],[-103.4485,20.5943],[-103.4309,20.5881],[-103.4301,20.5793],[-103.4576,20.5505],[-103.4507,20.5414],[-103.4491,20.5462],[-103.4442,20.5449],[-103.446,20.5404],[-103.4356,20.5385],[-103.4322,20.5411],[-103.4357,20.5438],[-103.4328,20.5435],[-103.431,20.5493],[-103.4345,20.5507],[-103.4321,20.5588],[-103.3988,20.5513],[-103.3923,20.5629],[-103.36,20.5724],[-103.358,20.5719],[-103.3636,20.5588],[-103.3609,20.5556],[-103.3314,20.5539],[-103.33,20.5482],[-103.3242,20.5472],[-103.3199,20.5499],[-103.3129,20.5423],[-103.2845,20.5327],[-103.2856,20.5269],[-103.2708,20.5294],[-103.2645,20.5154],[-103.2669,20.5085],[-103.2546,20.5119],[-103.2469,20.5068],[-103.2437,20.495],[-103.2363,20.4931],[-103.2333,20.4967],[-103.2212,20.496],[-103.2159,20.4988],[-103.198,20.4963],[-103.2118,20.4774],[-103.218,20.4754],[-103.2197,20.4687],[-103.2263,20.4676],[-103.2186,20.4568],[-103.249,20.4515],[-103.2407,20.4318],[-103.2551,20.429],[-103.2562,20.4363],[-103.2611,20.4419],[-103.2619,20.4349],[-103.258,20.4299],[-103.2622,20.4258],[-103.2622,20.42],[-103.2831,20.4087],[-103.2888,20.4008],[-103.3083,20.4019],[-103.3105,20.3918],[-103.3156,20.3981],[-103.328,20.3927],[-103.3339,20.387],[-103.3341,20.3822],[-103.3432,20.3686],[-103.3525,20.368],[-103.3588,20.3618],[-103.3831,20.3646],[-103.418,20.3597],[-103.4345,20.3641],[-103.443,20.3723],[-103.4559,20.3741],[-103.4654,20.3848],[-103.4825,20.3952],[-103.5063,20.4049],[-103.52,20.4062],[-103.5281,20.4113],[-103.5399,20.4068],[-103.5428,20.4111],[-103.5486,20.4065],[-103.5475,20.4148],[-103.5616,20.4474],[-103.5703,20.4586],[-103.5692,20.4625],[-103.5874,20.4809],[-103.596,20.4835],[-103.5895,20.4929],[-103.5949,20.494],[-103.5919,20.4994],[-103.5966,20.5102],[-103.5906,20.5115],[-103.5886,20.5203],[-103.5718,20.5249],[-103.5838,20.5298],[-103.5659,20.5629],[-103.5545,20.5672],[-103.5436,20.5854],[-103.5352,20.5926],[-103.4727,20.5977]]]}},{"type":"Feature","properties":{"cve":"120","nom":"Zapopan"},"geometry":{"type":"Polygon","coordinates":[[[-103.5218,20.9981],[-103.5078,20.9825],[-103.478,20.9862],[-103.4646,20.9802],[-103.4596,20.9699],[-103.4524,20.9728],[-103.4347,20.9648],[-103.4325,20.949],[-103.4365,20.9479],[-103.4356,20.9427],[-103.4383,20.9399],[-103.4357,20.9358],[-103.4306,20.9346],[-103.4299,20.9377],[-103.4224,20.9404],[-103.4035,20.9589],[-103.3995,20.9511],[-103.3959,20.9542],[-103.3947,20.9444],[-103.3788,20.9537],[-103.3681,20.9291],[-103.3606,20.9245],[-103.3558,20.9137],[-103.3518,20.9121],[-103.3517,20.8925],[-103.342,20.8843],[-103.3303,20.8648],[-103.3326,20.8582],[-103.3254,20.8456],[-103.3332,20.8324],[-103.3255,20.8179],[-103.334,20.8026],[-103.3282,20.8019],[-103.3217,20.7927],[-103.3248,20.7881],[-103.3231,20.7828],[-103.3068,20.7792],[-103.3071,20.7654],[-103.3144,20.7565],[-103.3134,20.7507],[-103.3263,20.7449],[-103.3256,20.7375],[-103.33,20.7295],[-103.3411,20.7231],[-103.3442,20.7159],[-103.3902,20.7098],[-103.4065,20.7117],[-103.3995,20.6991],[-103.4051,20.6926],[-103.3982,20.6907],[-103.4008,20.6817],[-103.4037,20.6816],[-103.4027,20.6749],[-103.4,20.6744],[-103.4026,20.6657],[-103.3973,20.6594],[-103.3989,20.6571],[-103.3935,20.6539],[-103.3993,20.6505],[-103.3999,20.6429],[-103.3951,20.6422],[-103.404,20.621],[-103.4004,20.6206],[-103.4085,20.6208],[-103.4172,20.6161],[-103.4234,20.62],[-103.4259,20.6163],[-103.4191,20.6054],[-103.4182,20.5886],[-103.4235,20.5847],[-103.4485,20.5943],[-103.4483,20.5967],[-103.4761,20.598],[-103.5352,20.5926],[-103.5328,20.601],[-103.5357,20.6045],[-103.5625,20.6157],[-103.5674,20.6144],[-103.5733,20.6066],[-103.5972,20.6037],[-103.6005,20.6114],[-103.5969,20.6152],[-103.6019,20.6353],[-103.6169,20.639],[-103.6165,20.6417],[-103.6088,20.6413],[-103.6069,20.6445],[-103.6105,20.6507],[-103.621,20.6514],[-103.6246,20.6564],[-103.6157,20.6619],[-103.6118,20.6743],[-103.615,20.6804],[-103.6124,20.6899],[-103.6152,20.6928],[-103.6274,20.6867],[-103.6514,20.6874],[-103.6595,20.7037],[-103.6577,20.7122],[-103.6348,20.7182],[-103.6363,20.7001],[-103.629,20.6938],[-103.6217,20.6922],[-103.6172,20.695],[-103.6199,20.7053],[-103.6171,20.7097],[-103.6207,20.7125],[-103.6182,20.7152],[-103.623,20.7177],[-103.623,20.7219],[-103.618,20.7281],[-103.6109,20.7296],[-103.6111,20.7347],[-103.6048,20.7396],[-103.604,20.7468],[-103.6095,20.7519],[-103.6105,20.7667],[-103.6172,20.7697],[-103.6232,20.7686],[-103.6311,20.7542],[-103.639,20.7535],[-103.6393,20.7508],[-103.6518,20.755],[-103.6485,20.7651],[-103.6509,20.767],[-103.6557,20.7678],[-103.6639,20.7603],[-103.6649,20.7685],[-103.6602,20.7737],[-103.6622,20.7778],[-103.6591,20.7838],[-103.661,20.7938],[-103.64,20.8028],[-103.6453,20.8062],[-103.6466,20.8181],[-103.6544,20.8368],[-103.6504,20.8385],[-103.6451,20.8473],[-103.6459,20.8537],[-103.6397,20.8589],[-103.6405,20.8675],[-103.6317,20.8705],[-103.6377,20.88],[-103.6333,20.8858],[-103.6425,20.8879],[-103.6553,20.9041],[-103.6517,20.9163],[-103.6337,20.9292],[-103.6156,20.9619],[-103.6017,20.9647],[-103.5822,20.957],[-103.574,20.9676],[-103.5612,20.9636],[-103.5492,20.9701],[-103.5467,20.9807],[-103.5274,20.9881],[-103.5255,20.996],[-103.5218,20.9981]]]}},{"type":"Feature","properties":{"cve":"098","nom":"San Pedro Tlaquepaque"},"geometry":{"type":"Polygon","coordinates":[[[-103.3207,20.6463],[-103.2822,20.6412],[-103.2867,20.6263],[-103.2814,20.6241],[-103.2838,20.6143],[-103.2573,20.6118],[-103.2561,20.6024],[-103.2601,20.5876],[-103.2569,20.5845],[-103.2563,20.5872],[-103.2404,20.5832],[-103.2396,20.573],[-103.2455,20.571],[-103.2538,20.5786],[-103.2543,20.5649],[-103.2677,20.5668],[-103.2668,20.5697],[-103.2832,20.5704],[-103.2842,20.5797],[-103.2866,20.5733],[-103.29,20.5744],[-103.2885,20.5799],[-103.3041,20.581],[-103.306,20.5768],[-103.3122,20.5747],[-103.3189,20.5852],[-103.3316,20.5783],[-103.3317,20.5538],[-103.3609,20.5556],[-103.3633,20.5629],[-103.358,20.5719],[-103.3632,20.5726],[-103.3923,20.5629],[-103.3988,20.5513],[-103.4321,20.5588],[-103.4345,20.5507],[-103.431,20.5493],[-103.4328,20.5435],[-103.4357,20.5438],[-103.432,20.5413],[-103.4356,20.5385],[-103.446,20.5404],[-103.4447,20.5451],[-103.4491,20.5462],[-103.4498,20.5413],[-103.4547,20.5439],[-103.4576,20.5505],[-103.4301,20.5793],[-103.4309,20.5881],[-103.4235,20.5847],[-103.4182,20.5886],[-103.4191,20.6054],[-103.4259,20.6161],[-103.4234,20.62],[-103.4172,20.6161],[-103.4085,20.6208],[-103.4019,20.6194],[-103.4005,20.6213],[-103.404,20.621],[-103.4009,20.6334],[-103.3967,20.6366],[-103.3991,20.6262],[-103.3899,20.6208],[-103.3962,20.6131],[-103.3894,20.613],[-103.3874,20.6037],[-103.3841,20.6113],[-103.3688,20.6106],[-103.3658,20.6154],[-103.3523,20.6153],[-103.3465,20.6084],[-103.3403,20.6093],[-103.3398,20.6147],[-103.3359,20.613],[-103.3301,20.6189],[-103.3328,20.6222],[-103.3291,20.628],[-103.3247,20.6263],[-103.3209,20.6308],[-103.3179,20.6425],[-103.3207,20.6463]]]}},{"type":"Feature","properties":{"cve":"101","nom":"Tonalá"},"geometry":{"type":"Polygon","coordinates":[[[-103.2657,20.7055],[-103.2518,20.7008],[-103.2406,20.7037],[-103.236,20.702],[-103.2266,20.6978],[-103.225,20.6915],[-103.2035,20.6854],[-103.2018,20.6804],[-103.1926,20.6758],[-103.1819,20.6593],[-103.1846,20.6558],[-103.184,20.648],[-103.1884,20.6443],[-103.1852,20.6289],[-103.175,20.6307],[-103.171,20.6225],[-103.1629,20.6184],[-103.1454,20.6237],[-103.1399,20.6218],[-103.1476,20.606],[-103.1445,20.5996],[-103.1467,20.5889],[-103.1434,20.5844],[-103.147,20.5812],[-103.1451,20.5776],[-103.1409,20.5781],[-103.1413,20.5725],[-103.137,20.5718],[-103.149,20.5688],[-103.1477,20.5583],[-103.1626,20.5522],[-103.17,20.5318],[-103.1788,20.5313],[-103.1812,20.534],[-103.1858,20.5645],[-103.2133,20.5648],[-103.215,20.5525],[-103.2384,20.5624],[-103.2543,20.5649],[-103.2538,20.5786],[-103.2455,20.571],[-103.2394,20.574],[-103.2404,20.5832],[-103.2563,20.5872],[-103.2569,20.5845],[-103.2601,20.5876],[-103.2561,20.6024],[-103.2573,20.6118],[-103.2838,20.6143],[-103.2814,20.6241],[-103.2867,20.6263],[-103.2831,20.6397],[-103.2697,20.6451],[-103.2677,20.6641],[-103.2638,20.6682],[-103.2706,20.6902],[-103.2657,20.7055]]]}},{"type":"Feature","properties":{"cve":"124","nom":"Zapotlanejo"},"geometry":{"type":"Polygon","coordinates":[[[-103.0585,20.7962],[-103.0299,20.7958],[-103.0247,20.7925],[-103.0269,20.765],[-103.0421,20.7558],[-103.0351,20.7557],[-103.0234,20.7488],[-103.0285,20.7434],[-103.0247,20.7367],[-103.0222,20.7357],[-103.018,20.7424],[-103.0029,20.7344],[-103.0054,20.7231],[-102.9993,20.7153],[-102.9922,20.7131],[-102.9931,20.7041],[-102.9891,20.7031],[-102.9932,20.6956],[-102.9908,20.6882],[-102.9724,20.7015],[-102.9588,20.7068],[-102.9585,20.6959],[-102.9517,20.7008],[-102.9472,20.6984],[-102.9474,20.687],[-102.9234,20.6777],[-102.9132,20.6665],[-102.894,20.6536],[-102.8934,20.6445],[-102.9012,20.6472],[-102.9026,20.6443],[-102.9152,20.645],[-102.9206,20.6193],[-102.9173,20.6198],[-102.9166,20.6161],[-102.9105,20.6132],[-102.886,20.6101],[-102.8997,20.5923],[-102.8728,20.5971],[-102.8698,20.5737],[-102.8743,20.5642],[-102.8767,20.5649],[-102.8831,20.5479],[-102.8984,20.5501],[-102.9075,20.5479],[-102.9113,20.5352],[-102.9179,20.533],[-102.9185,20.5276],[-102.9096,20.5258],[-102.907,20.5195],[-102.929,20.5092],[-102.9335,20.5036],[-102.9542,20.5026],[-102.9769,20.5166],[-103.009,20.5294],[-103.0129,20.5117],[-103.0225,20.5104],[-103.0277,20.5142],[-103.0345,20.5137],[-103.0312,20.5119],[-103.0363,20.5109],[-103.0324,20.5078],[-103.0353,20.5046],[-103.0307,20.4996],[-103.0344,20.4923],[-103.0499,20.49],[-103.0772,20.4959],[-103.081,20.4877],[-103.0945,20.4833],[-103.089,20.5182],[-103.093,20.5186],[-103.099,20.5135],[-103.109,20.518],[-103.0965,20.5302],[-103.1179,20.5441],[-103.1322,20.5468],[-103.1311,20.5517],[-103.1352,20.5563],[-103.1303,20.5684],[-103.1413,20.5725],[-103.1409,20.5781],[-103.1467,20.5799],[-103.1434,20.5844],[-103.1467,20.5889],[-103.1445,20.5996],[-103.1476,20.606],[-103.1399,20.6218],[-103.1454,20.6237],[-103.1629,20.6184],[-103.171,20.6225],[-103.175,20.6307],[-103.1852,20.6289],[-103.1884,20.6443],[-103.184,20.648],[-103.1846,20.6558],[-103.1819,20.6593],[-103.1926,20.6758],[-103.2018,20.6804],[-103.2035,20.6854],[-103.225,20.6915],[-103.2266,20.6978],[-103.236,20.702],[-103.2406,20.7037],[-103.2518,20.7008],[-103.2698,20.7071],[-103.2806,20.72],[-103.2833,20.7303],[-103.2285,20.7144],[-103.2107,20.7305],[-103.1775,20.7351],[-103.1451,20.7565],[-103.1335,20.7561],[-103.1201,20.7631],[-103.1065,20.7653],[-103.0994,20.7595],[-103.0833,20.7598],[-103.0858,20.7795],[-103.0793,20.7898],[-103.0585,20.7962]]]}},{"type":"Feature","properties":{"cve":"002","nom":"Acatlán de Juárez"},"geometry":{"type":"Polygon","coordinates":[[[-103.6542,20.5045],[-103.6374,20.4946],[-103.6371,20.4883],[-103.6272,20.4838],[-103.6144,20.4883],[-103.5874,20.4809],[-103.5694,20.4627],[-103.5703,20.4586],[-103.5616,20.4474],[-103.5475,20.4148],[-103.5486,20.4065],[-103.5428,20.4111],[-103.5399,20.4068],[-103.5366,20.4085],[-103.5363,20.4059],[-103.5483,20.4043],[-103.5425,20.3962],[-103.5464,20.3943],[-103.5403,20.3864],[-103.5467,20.3796],[-103.5478,20.3715],[-103.5404,20.3517],[-103.5672,20.3407],[-103.5802,20.3497],[-103.5915,20.3493],[-103.5907,20.3323],[-103.5938,20.3376],[-103.613,20.3343],[-103.6135,20.3835],[-103.6186,20.3856],[-103.6217,20.3825],[-103.6298,20.4092],[-103.6249,20.4105],[-103.6214,20.4179],[-103.6444,20.4112],[-103.6497,20.4249],[-103.6553,20.4199],[-103.6561,20.4252],[-103.6596,20.4227],[-103.6751,20.4356],[-103.682,20.4496],[-103.6816,20.4601],[-103.6875,20.4655],[-103.686,20.5012],[-103.6658,20.5001],[-103.66,20.5047],[-103.6542,20.5045]]]}},{"type":"Feature","properties":{"cve":"070","nom":"El Salto"},"geometry":{"type":"Polygon","coordinates":[[[-103.3188,20.585],[-103.3122,20.5747],[-103.306,20.5768],[-103.3041,20.581],[-103.2885,20.5799],[-103.29,20.5744],[-103.2866,20.5733],[-103.2842,20.5797],[-103.2832,20.5704],[-103.2668,20.5697],[-103.2677,20.5668],[-103.2384,20.5624],[-103.215,20.5525],[-103.2133,20.5648],[-103.1858,20.5645],[-103.1812,20.534],[-103.1688,20.5299],[-103.1695,20.523],[-103.1761,20.5134],[-103.1734,20.5125],[-103.1757,20.5034],[-103.1878,20.504],[-103.1998,20.4959],[-103.2159,20.4988],[-103.2212,20.496],[-103.2333,20.4967],[-103.2363,20.4931],[-103.2437,20.495],[-103.2469,20.5068],[-103.2546,20.5119],[-103.2669,20.5085],[-103.2645,20.5154],[-103.2708,20.5294],[-103.2856,20.5269],[-103.2845,20.5327],[-103.2949,20.5382],[-103.3129,20.5423],[-103.3199,20.5499],[-103.33,20.5482],[-103.3332,20.573],[-103.3316,20.5783],[-103.3188,20.585]]]}}]};
 
     /* Colores fijos para los tipos conocidos; los tipos nuevos toman color de la paleta de reserva. */
-    const COLORES_FIJOS = {
-        'preparatoria de la udg':'#2E86C1', 'preparatoria privada':'#F08013',
-        'universidad (o centro universitario de la udg)':'#18345D', 'universidad o centro universitario privado':'#8E2C48'
+    /* Colores por sostenimiento, iguales a las tablas: UdeG naranja, privada azul, pública verde.
+       El tono oscuro corresponde al nivel superior. */
+    const PALETA = {
+        udg:     { media:'#F39C34', sup:'#B35F08', fondo:'#F8C98F' },
+        publica: { media:'#4FAE5F', sup:'#1E7A3A', fondo:'#CDE8C4' },
+        privada: { media:'#5DADE2', sup:'#1F5F99', fondo:'#D6E6F6' }
     };
+    const sostenimiento = t => { const n = norm(t);
+        if (/udg|u de g|universidad de guadalajara/.test(n)) return 'udg';
+        if (/public|sej|sep\b|ceti|conalep|normal/.test(n)) return 'publica';
+        if (/privad|particular/.test(n)) return 'privada';
+        return null; };
+    const ORDEN_SOST = { udg:0, publica:1, privada:2 };
     const RESERVA = ['#1E8449','#7D3C98','#B7950B','#117A65','#A04000','#2C3E50','#C0392B','#5D6D7E'];
     let TIPOS = [], TIPO = {};
     let REGS = [], invalidas = 0, primeraCarga = true, firmaPrevia = '';
@@ -1086,7 +1122,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     const esSuperior = t => /universi|superior|tecnol[oó]gico/i.test(t);
 
     /* ---------- Estado y preferencias por visitante ---------- */
-    const estado = { vista:'puntos', limites:true, ocultos:new Set(), municipio:'', q:'', tema:null };
+    const estado = { vista:'puntos', limites:true, ocultos:new Set(), desmarcados:new Set(), municipio:'', q:'', tema:null };
     function guardar() {
         try { localStorage.setItem('cges-amg-escuelas-v1', JSON.stringify({ tema:estado.tema, vista:estado.vista, limites:estado.limites })); } catch (e) {}
     }
@@ -1180,7 +1216,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
             const munMapa = MUN_NORM[norm(munHoja)] || munPoligono(lon, lat) || munHoja || 'Sin municipio';
             regs.push({
                 wkt_geom:v(iG), nombre:v(iN), tipo:v(iT) || 'Sin tipo', municipio:munHoja, domicilio:v(iD),
-                latitud:lat, longitud:lon, _mun:munMapa,
+                latitud:lat, longitud:lon, _mun:munMapa, _key:v(iN) + '|' + v(iG),
                 _txt:norm([v(iN), v(iD), munHoja].join(' '))
             });
         });
@@ -1194,7 +1230,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
         TIPOS = Object.keys(conteo).map(t => ({
             k:t, n:conteo[t], sup:esSuperior(t),
             nivel:esSuperior(t) ? 'Superior' : 'Media superior',
-            color:COLORES_FIJOS[norm(t)] || RESERVA[(k++) % RESERVA.length]
+            sost:sostenimiento(t),
+            color:sostenimiento(t) ? PALETA[sostenimiento(t)][esSuperior(t) ? 'sup' : 'media'] : RESERVA[(k++) % RESERVA.length],
+            fondo:sostenimiento(t) ? PALETA[sostenimiento(t)].fondo : '#EEF3F9'
         })).sort((a, b) => (a.sup - b.sup) || b.n - a.n || a.k.localeCompare(b.k, 'es'));
         TIPO = Object.fromEntries(TIPOS.map(t => [t.k, t]));
     }
@@ -1255,7 +1293,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     chkLim.addEventListener('change', () => { estado.limites = chkLim.checked; guardar(); render(false); });
 
     function filtra() {
-        return REGS.filter(r => !estado.ocultos.has(r.tipo)
+        return REGS.filter(r => !estado.ocultos.has(r.tipo) && !estado.desmarcados.has(r._key)
             && (!estado.municipio || r._mun === estado.municipio)
             && (!estado.q || r._txt.includes(estado.q)));
     }
@@ -1305,6 +1343,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
             if (!sinMosaico && cargadas === 0 && fallas >= 4) { sinMosaico = true; avisoMosaico.hidden = false; render(false); }
         });
         capaBase.addTo(mapa);
+        const ESRI = 'https://server.arcgisonline.com/ArcGIS/rest/services/';
+        const satelite = L.layerGroup([
+            L.tileLayer(ESRI + 'World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom:19, attribution:'Imágenes © Esri, Maxar, Earthstar Geographics' }),
+            L.tileLayer(ESRI + 'Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}', { maxZoom:19, opacity:.75 }),
+            L.tileLayer(ESRI + 'Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', { maxZoom:19 })
+        ]);
+        L.control.layers({ 'Calles (OpenStreetMap)':capaBase, 'Satélite (Esri)':satelite }, null, { position:'topright', collapsed:false }).addTo(mapa);
         ['pointerdown', 'wheel', 'touchstart'].forEach(ev =>
             contMapa.addEventListener(ev, () => { if (encuadrado) encuadreUsuario = true; }, { passive:true }));
         if (window.ResizeObserver) new ResizeObserver(() => { mapa.invalidateSize(false); if (!encuadreUsuario) encuadraInicial(); }).observe(contMapa);
@@ -1364,7 +1409,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
         if (vista !== 'coropleta' && n) {
             if (vista === 'calor' && L.heatLayer) {
-                capaDatos = L.heatLayer(regs.map(r => [r.latitud, r.longitud, 0.7]), { radius:24, blur:18, minOpacity:0.3, maxZoom:14, gradient:{ 0.4:'#FDE3C4', 0.7:'#F5A65B', 1:'#C25E00' } });
+                capaDatos = L.heatLayer(regs.map(r => [r.latitud, r.longitud, 0.7]), { radius:24, blur:18, minOpacity:0.3, maxZoom:14, gradient:{ 0.4:'#F3D1F4', 0.7:'#C060C8', 1:'#7B1F86' } });
             } else if (vista === 'clusters' && L.markerClusterGroup) {
                 capaDatos = L.markerClusterGroup({ showCoverageOnHover:false, maxClusterRadius:50 });
                 regs.forEach(r => {
@@ -1396,6 +1441,65 @@ svg.leaflet-image-layer.leaflet-interactive path {
         setTimeout(() => mapa.invalidateSize(), 60);
     }
 
+    /* ---------- Listado de instituciones con casillas ---------- */
+    const cajaLst = document.getElementById('lstTablas');
+    const ORDEN_MUN = ['Guadalajara','Zapopan','Tlajomulco de Zúñiga','San Pedro Tlaquepaque','Tonalá'];
+    const ordMun = m => { const i = ORDEN_MUN.indexOf(m); return i < 0 ? 99 : i; };
+    function infoListado() {
+        const marc = REGS.filter(r => !estado.desmarcados.has(r._key)).length;
+        document.getElementById('lstInfo').innerHTML = `<b>${nf(marc)}</b> de ${nf(REGS.length)} seleccionadas`;
+        cajaLst.querySelectorAll('.lst-bloque').forEach(b => {
+            const cs = [...b.querySelectorAll('tbody input')];
+            b.querySelector('.lst-n').textContent = `${nf(cs.filter(c => c.checked).length)} de ${nf(cs.length)}`;
+        });
+    }
+    function pintaListado() {
+        const grupos = [['Preparatorias', REGS.filter(r => !TIPO[r.tipo]?.sup)], ['Universidades', REGS.filter(r => TIPO[r.tipo]?.sup)]];
+        cajaLst.innerHTML = grupos.filter(g => g[1].length).map(([tit, regs], gi) => {
+            const porMun = {};
+            regs.forEach(r => { (porMun[r._mun] = porMun[r._mun] || []).push(r); });
+            const muns = Object.keys(porMun).sort((a, b) => ordMun(a) - ordMun(b) || porMun[b].length - porMun[a].length || a.localeCompare(b, 'es'));
+            const filas = muns.map(m => {
+                const lista = porMun[m].sort((a, b) => (ORDEN_SOST[TIPO[a.tipo]?.sost] ?? 3) - (ORDEN_SOST[TIPO[b.tipo]?.sost] ?? 3) || a.nombre.localeCompare(b.nombre, 'es'));
+                return `<tr class="lst-mun"><td colspan="5">${esc(m)} <span>${nf(lista.length)}</span></td></tr>` + lista.map(r => {
+                    const t = TIPO[r.tipo] || {};
+                    return `<tr><td class="lst-ck"><input type="checkbox" data-key="${esc(r._key)}" ${estado.desmarcados.has(r._key) ? '' : 'checked'} aria-label="Mostrar ${esc(r.nombre)}"></td>
+                        <td><button type="button" class="lst-nom" data-key="${esc(r._key)}">${esc(r.nombre)}</button></td>
+                        <td class="lst-tipo" style="background:${t.fondo || '#EEF3F9'}">${esc(r.tipo)}</td>
+                        <td>${esc(r.municipio || r._mun)}</td><td>${esc(r.domicilio || '—')}</td></tr>`;
+                }).join('');
+            }).join('');
+            return `<div class="lst-bloque">
+                <div class="lst-tit"><h3>${tit}</h3><span class="lst-n"></span><span class="sep-flex"></span>
+                    <button type="button" class="btn-texto" data-grupo="${gi}" data-accion="todos">Seleccionar todos</button>
+                    <button type="button" class="btn-texto" data-grupo="${gi}" data-accion="ninguno">Deseleccionar todos</button></div>
+                <div class="lst-scroll"><table class="lst-tabla"><thead><tr><th></th><th>Nombre</th><th>Tipo</th><th>Municipio</th><th>Domicilio</th></tr></thead>
+                <tbody data-grupo="${gi}">${filas}</tbody></table></div></div>`;
+        }).join('');
+        infoListado();
+    }
+    const fijaGrupo = (cont, marcar) => {
+        cont.querySelectorAll('tbody input[data-key]').forEach(c => { c.checked = marcar; marcar ? estado.desmarcados.delete(c.dataset.key) : estado.desmarcados.add(c.dataset.key); });
+        infoListado(); render(false);
+    };
+    cajaLst.addEventListener('change', e => {
+        const c = e.target.closest('input[data-key]'); if (!c) return;
+        c.checked ? estado.desmarcados.delete(c.dataset.key) : estado.desmarcados.add(c.dataset.key);
+        infoListado(); render(false);
+    });
+    cajaLst.addEventListener('click', e => {
+        const b = e.target.closest('button[data-accion]');
+        if (b) return fijaGrupo(b.closest('.lst-bloque'), b.dataset.accion === 'todos');
+        const n = e.target.closest('.lst-nom'); if (!n) return;
+        const r = REGS.find(x => x._key === n.dataset.key); if (!r || !mapa) return;
+        encuadreUsuario = true;
+        contMapa.scrollIntoView({ behavior:'smooth', block:'center' });
+        mapa.setView([r.latitud, r.longitud], 16);
+        L.popup(optsPopup()).setLatLng([r.latitud, r.longitud]).setContent(ficha(r)).openOn(mapa);
+    });
+    document.getElementById('lstTodos').addEventListener('click', () => fijaGrupo(cajaLst, true));
+    document.getElementById('lstNinguno').addEventListener('click', () => fijaGrupo(cajaLst, false));
+
     /* ---------- Ciclo de lectura ---------- */
     const estadoLectura = document.getElementById('estadoLectura');
     const btnActualizar = document.getElementById('btnActualizar');
@@ -1420,7 +1524,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
             REGS = regs; invalidas = malas;
             construyeTipos();
             Object.keys(TIPO).length && [...estado.ocultos].forEach(k => { if (!TIPO[k]) estado.ocultos.delete(k); });
-            pintaTipos(); pintaMunicipios();
+            pintaTipos(); pintaMunicipios(); pintaListado();
             document.getElementById('notaTotal').textContent = `${nf(REGS.length)} instituciones · WGS84 (EPSG:4326)`;
             document.getElementById('pieTotal').textContent = nf(REGS.length);
             render(false);
