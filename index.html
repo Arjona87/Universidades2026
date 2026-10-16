@@ -944,6 +944,10 @@ svg.leaflet-image-layer.leaflet-interactive path {
     .pop-chico .pop-campo { font-size:10px; }
     /* La capa SVG de escuelas cubre todo el mapa: solo sus figuras reciben clics, para no tapar la incidencia de abajo. */
     .leaflet-overlay-pane > svg { pointer-events:none; }
+    .tipo-chip[aria-pressed="mixed"] { border-style:dashed; border-color:var(--muted); }
+    .lst-tabla { table-layout:fixed; }
+    .lst-tabla col.c-ck { width:40px; } .lst-tabla col.c-nom { width:32%; } .lst-tabla col.c-tipo { width:17%; } .lst-tabla col.c-mun { width:13%; }
+    .lst-tabla td, .lst-tabla td.lst-tipo { white-space:normal; overflow-wrap:anywhere; }
     .pop-campo em { color:#94A3B8; font-style:normal; }
     .pop-chico .leaflet-popup-content { margin:9px 11px; }
     .pop-chico .pop-nombre { font-size:12.5px; margin-bottom:6px; }
@@ -1020,7 +1024,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
         <div class="panel-cuerpo">
             <div class="mun-intro">
                 <span class="mun-kicker">Georreferencia</span>
-                <p>Ubicaciones tomadas de <code>wkt_geom</code> (longitud y latitud en WGS84). Datos leídos en vivo desde Google Sheets y actualizados cada 60 segundos. Haga clic en un punto para ver la ficha de la institución.
+                <p>Haga clic en un punto para ver la ficha de la institución.
                    La leyenda de tipos funciona como filtro: un clic oculta o muestra esa categoría.</p>
             </div>
 
@@ -1251,22 +1255,29 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
     /* ---------- Controles ---------- */
     const cajaTipos = document.getElementById('tipos');
+    /* Botones de tipo y casillas del listado son un solo control: el botón refleja cuántas escuelas
+       de su tipo están marcadas (todas = encendido, ninguna = apagado, algunas = parcial). */
+    const marcadasDe = k => REGS.filter(r => r.tipo === k && !estado.desmarcados.has(r._key)).length;
     function pintaTipos() {
         let html = '', nivelPrev = '';
         TIPOS.forEach(t => {
             if (t.nivel !== nivelPrev) { html += `<span class="tipo-nivel">${t.nivel}</span>`; nivelPrev = t.nivel; }
-            html += `<button type="button" class="tipo-chip" data-tipo="${esc(t.k)}" aria-pressed="${!estado.ocultos.has(t.k)}">
+            const m = marcadasDe(t.k), est = m === t.n ? 'true' : (m === 0 ? 'false' : 'mixed');
+            html += `<button type="button" class="tipo-chip" data-tipo="${esc(t.k)}" aria-pressed="${est}">
                 <span class="pt${t.sup ? ' sup' : ''}" style="background:${t.color}"></span>${esc(t.k)}
-                <span class="n">${nf(t.n)}</span></button>`;
+                <span class="n">${est === 'mixed' ? `${nf(m)}/${nf(t.n)}` : nf(t.n)}</span></button>`;
         });
         cajaTipos.innerHTML = html;
     }
+    function sincroniza() {
+        cajaLst.querySelectorAll('input[data-key]').forEach(c => { c.checked = !estado.desmarcados.has(c.dataset.key); });
+        pintaTipos(); infoListado(); render(false);
+    }
     cajaTipos.addEventListener('click', e => {
         const b = e.target.closest('.tipo-chip'); if (!b) return;
-        const k = b.dataset.tipo;
-        estado.ocultos.has(k) ? estado.ocultos.delete(k) : estado.ocultos.add(k);
-        b.setAttribute('aria-pressed', String(!estado.ocultos.has(k)));
-        render(false);
+        const k = b.dataset.tipo, todas = marcadasDe(k) === TIPO[k].n;
+        REGS.forEach(r => { if (r.tipo === k) todas ? estado.desmarcados.add(r._key) : estado.desmarcados.delete(r._key); });
+        sincroniza();
     });
 
     const selMun = document.getElementById('selMunicipio');
@@ -1286,8 +1297,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
     txt.addEventListener('input', () => { clearTimeout(tBus); tBus = setTimeout(() => { estado.q = norm(txt.value); render(!!estado.q); }, 180); });
 
     document.getElementById('btnLimpiar').addEventListener('click', () => {
-        estado.ocultos.clear(); estado.municipio = ''; estado.q = '';
-        selMun.value = ''; txt.value = ''; pintaTipos(); render(true);
+        estado.desmarcados.clear(); estado.municipio = ''; estado.q = '';
+        selMun.value = ''; txt.value = ''; sincroniza(); render(true);
     });
 
     const vistaBtns = document.getElementById('vistaBtns');
@@ -1305,7 +1316,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
     chkLim.addEventListener('change', () => { estado.limites = chkLim.checked; guardar(); render(false); });
 
     function filtra() {
-        return REGS.filter(r => !estado.ocultos.has(r.tipo) && !estado.desmarcados.has(r._key)
+        return REGS.filter(r => !estado.desmarcados.has(r._key)
             && (!estado.municipio || r._mun === estado.municipio)
             && (!estado.q || r._txt.includes(estado.q)));
     }
@@ -1485,19 +1496,19 @@ svg.leaflet-image-layer.leaflet-interactive path {
             }).join('');
             return `<div class="lst-bloque">
                 <div class="lst-tit"><h3>${tit}</h3><span class="lst-n"></span></div>
-                <div class="lst-scroll"><table class="lst-tabla"><thead><tr><th></th><th>Nombre</th><th>Tipo</th><th>Municipio</th><th>Domicilio</th></tr></thead>
+                <div class="lst-scroll"><table class="lst-tabla"><colgroup><col class="c-ck"><col class="c-nom"><col class="c-tipo"><col class="c-mun"><col></colgroup><thead><tr><th></th><th>Nombre</th><th>Tipo</th><th>Municipio</th><th>Domicilio</th></tr></thead>
                 <tbody data-grupo="${gi}">${filas}</tbody></table></div></div>`;
         }).join('');
         infoListado();
     }
     const fijaGrupo = (cont, marcar) => {
-        cont.querySelectorAll('tbody input[data-key]').forEach(c => { c.checked = marcar; marcar ? estado.desmarcados.delete(c.dataset.key) : estado.desmarcados.add(c.dataset.key); });
-        infoListado(); render(false);
+        cont.querySelectorAll('tbody input[data-key]').forEach(c => { marcar ? estado.desmarcados.delete(c.dataset.key) : estado.desmarcados.add(c.dataset.key); });
+        sincroniza();
     };
     cajaLst.addEventListener('change', e => {
         const c = e.target.closest('input[data-key]'); if (!c) return;
         c.checked ? estado.desmarcados.delete(c.dataset.key) : estado.desmarcados.add(c.dataset.key);
-        infoListado(); render(false);
+        sincroniza();
     });
     cajaLst.addEventListener('click', e => {
         const b = e.target.closest('button[data-accion]');
